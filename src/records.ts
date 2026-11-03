@@ -9,6 +9,7 @@ export type CalendarRecord = {
   template: TemplateId;
   nickname: string;
   profileNickname: string;
+  region: string;
   lastOpen: string;
 };
 
@@ -29,6 +30,7 @@ export function readRecord(): CalendarRecord | null {
       template: (value.template as string) === 'calendar' ? 'badge' : value.template || 'ticket',
       nickname: value.nickname || '',
       profileNickname: value.profileNickname || '',
+      region: value.region || '',
       lastOpen: value.lastOpen || '',
     };
   } catch {

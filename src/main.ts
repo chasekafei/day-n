@@ -19,6 +19,7 @@ let type = 'all';
 let customDate = today;
 let customPerson = '';
 let userNickname = '';
+let userRegion = '';
 let entryMethod: 'event' | 'date' = 'event';
 let relationA: EventItem = EVENT_DATA.items.find(item => item.date === '2024-07-30') || EVENT_DATA.items[0];
 let relationB: EventItem = EVENT_DATA.items.find(item => item.date === '2025-05-24') || EVENT_DATA.items[1];
@@ -53,7 +54,7 @@ function selectedResult(startDate: string, eventTitle: string, approx = false): 
   const days = daysSince(startDate, today, true) || 1;
   const title = titleForDays(days);
   const stats = statsSince(startDate, today, focus);
-  return { focus, startDate, eventTitle: approx ? `约 ${eventTitle}` : eventTitle, days, ...title, ...stats, nickname: focus === 'custom' ? customPerson : '', profileNickname: userNickname };
+  return { focus, startDate, eventTitle: approx ? `约 ${eventTitle}` : eventTitle, days, ...title, ...stats, nickname: focus === 'custom' ? customPerson : '', profileNickname: userNickname, region: userRegion };
 }
 
 function focusDisplayName(currentFocus: Focus, nickname = ''): string {
@@ -87,15 +88,13 @@ function entrySelector(page: 'home' | 'events'): string {
 
 function saveCurrent(): void {
   if (!result) return;
-  const record: CalendarRecord = { focus, startDate: result.startDate, startEventId: selected?.id || null, approx: result.eventTitle.startsWith('约 '), dayZero: false, template, nickname: result.nickname, profileNickname: result.profileNickname, lastOpen: today };
+  const record: CalendarRecord = { focus, startDate: result.startDate, startEventId: selected?.id || null, approx: result.eventTitle.startsWith('约 '), dayZero: false, template, nickname: result.nickname, profileNickname: result.profileNickname, region: result.region, lastOpen: today };
   writeRecord(record);
 }
 
 function cardPreview(card: CardResult): string {
-  const artwork = `./artwork/${template === 'table' ? 'table-base-v3-01.png' : template === 'badge' ? 'badge-base-01.png' : `${template}-base-01.png`}`;
-  if (template === 'badge') {
-    return `<div class="card-preview badge with-art" style="background-image:url('${artwork}')"><span class="badge-preview-product">${PRODUCT_NAME}</span><span class="badge-preview-focus">${escapeHTML(focusDisplayName(card.focus, card.nickname))}</span><div class="badge-preview-title">距离我成为${escapeHTML(focusDisplayName(card.focus, card.nickname))}的球迷已经</div><div class="badge-preview-days">${card.days} 天了</div><div class="badge-preview-rank">${escapeHTML(card.title)}</div><div class="badge-preview-event"><small>入坑事件</small><strong>${escapeHTML(card.eventTitle)}</strong><span>入坑日 ${displayDate(card.startDate)}</span></div><div class="badge-preview-nickname">${escapeHTML(card.profileNickname || 'MY ENTRY')}</div><div class="badge-preview-number">NO. ${card.focus === 'wang-chuqin' ? '20000511' : card.focus === 'sun-yingsha' ? '20001104' : card.focus === 'shatou' ? '20005114' : 'CUSTOM'}</div></div>`;
-  }
+  if (template === 'badge') return '<img id="share-card" class="share-card" alt="球迷证">';
+  const artwork = `./artwork/${template === 'table' ? 'table-base-v3-01.png' : `${template}-base-01.png`}`;
   return `<div class="card-preview ${template} with-art" style="background-image:url('${artwork}')">
     <div class="preview-top"><span>${PRODUCT_NAME}</span><span>${escapeHTML(focusDisplayName(card.focus, card.nickname))}</span></div>
     <div class="preview-kicker">${escapeHTML(card.eventTitle)}</div>
@@ -133,7 +132,7 @@ function eventsView(): string {
 
 function resultView(): string {
   if (!result) return homeView();
-  return shell(`<section class="result-content"><div class="result-heading"><button class="back-button" data-action="home">‹</button><div><p class="eyebrow">YOUR DATE CARD</p><h1>这一天，记下来了。</h1></div><button class="text-button" data-action="home">重新选择</button></div><div class="card-stage">${cardPreview(result)}</div><label class="card-profile-field">我的昵称（可选）<input id="card-nickname" value="${escapeHTML(userNickname)}" maxlength="24" placeholder="例如：小王的第 N 天"></label><div class="template-tabs">${(['ticket', 'scoreboard', 'badge', 'table'] as TemplateId[]).map(id => `<button class="${template === id ? 'active' : ''}" data-template="${id}">${({ ticket: '票据', scoreboard: '记分牌', badge: '工作证', table: '球台' } as Record<TemplateId, string>)[id]}</button>`).join('')}</div><div class="result-actions"><button class="result-action-button" data-action="save">保存到相册 <span>↓</span></button><button class="result-action-button" data-action="share">发布图文 <span>↗</span></button><button class="result-action-button" data-action="comment">带图评论 <span>✎</span></button></div><p class="data-note">统计按${PRODUCT_NAME}收录的重大事件计算 · 数据截至 ${EVENT_DATA.data_as_of}</p></section>`, 'home');
+  return shell(`<section class="result-content"><div class="result-heading"><button class="back-button" data-action="home">‹</button><div><p class="eyebrow">YOUR DATE CARD</p><h1>这一天，记下来了。</h1></div><button class="text-button" data-action="home">重新选择</button></div><div class="card-stage">${cardPreview(result)}</div>${template === 'badge' ? `<div class="badge-fields"><label>姓名<input id="card-nickname" value="${escapeHTML(userNickname)}" maxlength="16" placeholder="例如：MouT.me"></label><label>地区<input id="card-region" value="${escapeHTML(userRegion)}" maxlength="16" placeholder="例如：广东 广州"></label></div>` : `<label class="card-profile-field">我的昵称（可选）<input id="card-nickname" value="${escapeHTML(userNickname)}" maxlength="24" placeholder="例如：小王的第 N 天"></label>`}<div class="template-tabs">${(['ticket', 'scoreboard', 'badge', 'table'] as TemplateId[]).map(id => `<button class="${template === id ? 'active' : ''}" data-template="${id}">${({ ticket: '票据', scoreboard: '记分牌', badge: '工作证', table: '球台' } as Record<TemplateId, string>)[id]}</button>`).join('')}</div><div class="result-actions"><button class="result-action-button" data-action="save">保存到相册 <span>↓</span></button><button class="result-action-button" data-action="share">发布图文 <span>↗</span></button><button class="result-action-button" data-action="comment">带图评论 <span>✎</span></button></div><p class="data-note">统计按${PRODUCT_NAME}收录的重大事件计算 · 数据截至 ${EVENT_DATA.data_as_of}</p></section>`, 'home');
 }
 
 function presetIntervalCard(preset: (typeof PRESET_INTERVALS)[number]): string {
@@ -176,6 +175,17 @@ function aboutView(): string {
 function render(): void {
   app.innerHTML = view === 'home' ? homeView() : view === 'events' ? eventsView() : view === 'result' ? resultView() : view === 'relations' ? relationsView() : aboutView();
   bindEvents();
+  void paintShareCard();
+}
+
+let paintToken = 0;
+async function paintShareCard(): Promise<void> {
+  const image = app.querySelector<HTMLImageElement>('#share-card');
+  if (!image || !result || template !== 'badge') return;
+  const token = ++paintToken;
+  const canvas = await renderCard(result, 'badge');
+  if (token !== paintToken || !image.isConnected) return;
+  image.src = canvas.toDataURL('image/png');
 }
 
 function openResult(item: EventItem, approximate = false): void {
@@ -210,7 +220,7 @@ function bindEvents(): void {
     else if (action === 'events') { view = 'events'; render(); }
     else if (action === 'relations') { view = 'relations'; render(); }
     else if (action === 'about') { view = 'about'; render(); }
-    else if (action === 'resume') { const record = readRecord(); if (record) { focus = record.focus; customPerson = record.nickname || ''; userNickname = record.profileNickname || ''; template = record.template; customDate = record.startDate; selected = record.startEventId ? EVENT_DATA.items.find(item => item.id === record.startEventId) || null : null; result = selectedResult(record.startDate, selected ? shortEventTitle(selected) : (record.focus === 'custom' ? `${customPerson || '自定义对象'} 的入坑日` : '手动选择的入坑日'), record.approx); view = 'result'; render(); } }
+    else if (action === 'resume') { const record = readRecord(); if (record) { focus = record.focus; customPerson = record.nickname || ''; userNickname = record.profileNickname || ''; userRegion = record.region || ''; template = record.template; customDate = record.startDate; selected = record.startEventId ? EVENT_DATA.items.find(item => item.id === record.startEventId) || null : null; result = selectedResult(record.startDate, selected ? shortEventTitle(selected) : (record.focus === 'custom' ? `${customPerson || '自定义对象'} 的入坑日` : '手动选择的入坑日'), record.approx); view = 'result'; render(); } }
     else if (action === 'generate-entry') {
       if (focus === 'custom') {
         customPerson = app.querySelector<HTMLInputElement>('#custom-person')?.value.trim() || customPerson.trim();
@@ -256,7 +266,8 @@ function bindEvents(): void {
   const customDateInput = app.querySelector<HTMLInputElement>('#custom-date'); if (customDateInput) customDateInput.addEventListener('change', () => { customDate = customDateInput.value || customDate; });
   const customPersonInput = app.querySelector<HTMLInputElement>('#custom-person'); if (customPersonInput) customPersonInput.addEventListener('input', () => { customPerson = customPersonInput.value; });
   const manualDateInput = app.querySelector<HTMLInputElement>('#manual-date'); if (manualDateInput) manualDateInput.addEventListener('change', () => { customDate = manualDateInput.value || customDate; });
-  const cardNicknameInput = app.querySelector<HTMLInputElement>('#card-nickname'); if (cardNicknameInput) cardNicknameInput.addEventListener('change', () => { userNickname = cardNicknameInput.value.trim(); if (result) { result.profileNickname = userNickname; saveCurrent(); } render(); });
+  const cardNicknameInput = app.querySelector<HTMLInputElement>('#card-nickname'); if (cardNicknameInput) cardNicknameInput.addEventListener('input', () => { userNickname = cardNicknameInput.value.trim(); if (result) { result.profileNickname = userNickname; saveCurrent(); } void paintShareCard(); });
+  const cardRegionInput = app.querySelector<HTMLInputElement>('#card-region'); if (cardRegionInput) cardRegionInput.addEventListener('input', () => { userRegion = cardRegionInput.value.trim(); if (result) { result.region = userRegion; saveCurrent(); } void paintShareCard(); });
 }
 
 render();

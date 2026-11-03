@@ -13,13 +13,27 @@ export type CardResult = {
   team: number;
   nickname: string;
   profileNickname: string;
+  region: string;
 };
 
-const ARTWORK_PATHS: Record<TemplateId, string> = {
-  ticket: './artwork/ticket-base-01.jpg',
-  scoreboard: './artwork/scoreboard-base-01.jpg',
-  badge: './artwork/badge-base-01.png',
-  table: './artwork/table-base-v3-01.jpg',
+const ARTWORK_PATHS: Record<Exclude<TemplateId, 'badge'>, string> = {
+  ticket: './artwork/ticket-base-01.png',
+  scoreboard: './artwork/scoreboard-base-01.png',
+  table: './artwork/table-base-v3-01.png',
+};
+
+const BADGE_ARTWORK: Record<Focus, string> = {
+  'wang-chuqin': './artwork/badge-wang.png',
+  'sun-yingsha': './artwork/badge-sun.png',
+  shatou: './artwork/badge-shatou.png',
+  custom: './artwork/badge-shatou.png',
+};
+
+const BADGE_SLOTS = {
+  name: { x: 588, y: 570, size: 34, width: 270 },
+  region: { x: 588, y: 664, size: 34, width: 270 },
+  date: { x: 588, y: 748, size: 28, width: 250 },
+  days: { right: 792, y: 920, size: 112, width: 220 },
 };
 
 function font(ctx: CanvasRenderingContext2D, weight: number, size: number): void {
@@ -45,13 +59,23 @@ function drawText(ctx: CanvasRenderingContext2D, value: string, x: number, y: nu
   ctx.fillText(fitText(ctx, value, maxWidth, size, weight), x, y);
 }
 
-function loadArtwork(template: TemplateId): Promise<HTMLImageElement> {
+function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error(`卡片底图加载失败：${template}`));
-    image.src = ARTWORK_PATHS[template];
+    image.onerror = () => reject(new Error(`卡片底图加载失败：${src}`));
+    image.src = src;
   });
+}
+
+function fittedSize(ctx: CanvasRenderingContext2D, value: string, maxWidth: number, size: number, weight: number): number {
+  let current = size;
+  while (current > 18) {
+    font(ctx, weight, current);
+    if (ctx.measureText(value).width <= maxWidth) return current;
+    current -= 2;
+  }
+  return current;
 }
 
 function drawFallback(ctx: CanvasRenderingContext2D, template: TemplateId, width: number, height: number): void {
@@ -91,24 +115,36 @@ function renderScoreboard(ctx: CanvasRenderingContext2D, result: CardResult): vo
   drawText(ctx, 'ENTRY SCOREBOARD', 90, 1380, 20, muted, 400, 700);
 }
 
-function renderBadge(ctx: CanvasRenderingContext2D, result: CardResult): void {
-  const cream = '#f7e6ca', gold = '#f1c88e', muted = '#f5d9ba', burgundy = '#5c0f2e';
-  ctx.fillStyle = 'rgba(18, 3, 12, .16)'; ctx.fillRect(92, 330, 296, 430);
-  ctx.fillStyle = 'rgba(247, 230, 202, .92)'; ctx.fillRect(112, 350, 256, 390);
-  ctx.fillStyle = burgundy; ctx.beginPath(); ctx.arc(240, 490, 68, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = gold; ctx.beginPath(); ctx.arc(240, 467, 30, 0, Math.PI * 2); ctx.fill(); ctx.fillRect(200, 515, 80, 100);
-  drawText(ctx, PRODUCT_NAME, 100, 175, 26, cream, 500, 800);
-  drawText(ctx, `距离我成为${focusName(result)}的球迷已经`, 438, 395, 26, cream, 500, 700);
-  drawText(ctx, `${result.days} 天了`, 438, 500, 104, gold, 480, 900);
-  drawText(ctx, result.title, 438, 555, 30, cream, 500, 800);
-  drawText(ctx, result.subtitle, 438, 600, 22, muted, 500, 600);
-  drawText(ctx, '昵称 / NICKNAME', 438, 700, 18, muted, 500, 700);
-  drawText(ctx, result.profileNickname || 'MY ENTRY', 438, 740, 28, cream, 500, 800);
-  drawText(ctx, '入坑事件', 438, 875, 18, muted, 500, 700);
-  drawText(ctx, result.eventTitle, 438, 920, 24, cream, 500, 700);
-  drawText(ctx, `入坑日 ${displayDate(result.startDate)}`, 438, 970, 22, muted, 500, 600);
-  drawText(ctx, `NO. ${result.focus === 'wang-chuqin' ? '20000511' : result.focus === 'sun-yingsha' ? '20001104' : result.focus === 'shatou' ? '20005114' : 'CUSTOM'}`, 100, 1250, 32, cream, 600, 900);
-  drawText(ctx, `${focusName(result)} · ${PRODUCT_NAME}`, 100, 1340, 21, muted, 700, 700);
+function drawBadgeField(ctx: CanvasRenderingContext2D, value: string, x: number, y: number, size: number, width: number, scale: number): void {
+  const text = value.trim();
+  if (!text) return;
+  fittedSize(ctx, text, width * scale, size * scale, 800);
+  ctx.fillStyle = '#111827';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText(text, x * scale, y * scale);
+}
+
+async function renderBadge(result: CardResult): Promise<HTMLCanvasElement> {
+  const canvas = document.createElement('canvas');
+  const artwork = await loadImage(BADGE_ARTWORK[result.focus]);
+  canvas.width = artwork.naturalWidth;
+  canvas.height = artwork.naturalHeight;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return canvas;
+  ctx.drawImage(artwork, 0, 0);
+  const scale = artwork.naturalWidth / 1157;
+  drawBadgeField(ctx, result.profileNickname, BADGE_SLOTS.name.x, BADGE_SLOTS.name.y, BADGE_SLOTS.name.size, BADGE_SLOTS.name.width, scale);
+  drawBadgeField(ctx, result.region, BADGE_SLOTS.region.x, BADGE_SLOTS.region.y, BADGE_SLOTS.region.size, BADGE_SLOTS.region.width, scale);
+  drawBadgeField(ctx, displayDate(result.startDate), BADGE_SLOTS.date.x, BADGE_SLOTS.date.y, BADGE_SLOTS.date.size, BADGE_SLOTS.date.width, scale);
+  const days = String(result.days);
+  const daysSize = fittedSize(ctx, days, BADGE_SLOTS.days.width * scale, BADGE_SLOTS.days.size * scale, 900);
+  ctx.fillStyle = '#bf121c';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'alphabetic';
+  font(ctx, 900, daysSize);
+  ctx.fillText(days, BADGE_SLOTS.days.right * scale, BADGE_SLOTS.days.y * scale);
+  return canvas;
 }
 
 function renderTable(ctx: CanvasRenderingContext2D, result: CardResult): void {
@@ -126,17 +162,17 @@ function renderTable(ctx: CanvasRenderingContext2D, result: CardResult): void {
 }
 
 export async function renderCard(result: CardResult, template: TemplateId, width = 1080, height = 1440): Promise<HTMLCanvasElement> {
+  if (template === 'badge') return renderBadge(result);
   const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
   const ctx = canvas.getContext('2d'); if (!ctx) return canvas;
   try {
-    const artwork = await loadArtwork(template);
+    const artwork = await loadImage(ARTWORK_PATHS[template]);
     ctx.drawImage(artwork, 0, 0, width, height);
   } catch {
     drawFallback(ctx, template, width, height);
   }
   if (template === 'ticket') renderTicket(ctx, result);
   else if (template === 'scoreboard') renderScoreboard(ctx, result);
-  else if (template === 'badge') renderBadge(ctx, result);
   else renderTable(ctx, result);
   return canvas;
 }
