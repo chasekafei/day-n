@@ -16,8 +16,7 @@ export type CardResult = {
   region: string;
 };
 
-const ARTWORK_PATHS: Record<Exclude<TemplateId, 'badge' | 'scoreboard'>, string> = {
-  ticket: './artwork/ticket-base-01.png',
+const ARTWORK_PATHS: Record<Exclude<TemplateId, 'badge' | 'scoreboard' | 'ticket'>, string> = {
   table: './artwork/table-base-v3-01.png',
 };
 
@@ -86,19 +85,75 @@ function drawFallback(ctx: CanvasRenderingContext2D, template: TemplateId, width
   ctx.strokeStyle = accent; ctx.lineWidth = Math.max(3, width / 260); ctx.strokeRect(40, 40, width - 80, height - 80);
 }
 
-function renderTicket(ctx: CanvasRenderingContext2D, result: CardResult): void {
-  const dark = '#3d2b1f', green = '#174f43', red = '#b5451b', muted = '#786a5a';
-  drawText(ctx, PRODUCT_NAME, 88, 116, 24, green, 430, 800);
-  drawText(ctx, focusName(result), 760, 116, 23, green, 230, 700);
-  drawText(ctx, result.eventTitle, 90, 370, 25, muted, 720, 600);
-  drawText(ctx, String(result.days), 88, 650, 190, red, 450, 900);
-  drawText(ctx, '天', 500, 642, 54, dark, 90, 900);
-  drawText(ctx, result.title, 90, 790, 48, dark, 760, 900);
-  drawText(ctx, result.subtitle, 94, 840, 25, muted, 740, 600);
-  drawText(ctx, `入坑日 ${displayDate(result.startDate)}`, 92, 1085, 24, dark, 350, 700);
-  drawText(ctx, `${focusName(result)} · 见证 ${result.total} 个重要冠军`, 92, 1140, 24, dark, 760, 700);
-  drawText(ctx, `混双 ${result.mixed}  ·  单打 ${result.singles}  ·  团体 ${result.team}`, 92, 1330, 22, muted, 760, 600);
-  drawText(ctx, '日期记录', 92, 1380, 20, muted, 300, 700);
+const TICKET_ARTWORK = './artwork/ticket-card.png';
+const TICKET_WIDTH = 1086;
+const TICKET_ANGLE = -6.9 * Math.PI / 180;
+const TICKET_SLOTS = {
+  name: { x: 354, y: 794, size: 48, width: 400 },
+  date: { x: 368, y: 934, size: 46, width: 250 },
+  days: { x: 725, y: 891, size: 46, width: 160 },
+  unit: { size: 30, gap: 10 },
+  event: { x: 385, y: 1074, size: 32, width: 450 },
+};
+
+function drawTicketLine(ctx: CanvasRenderingContext2D, value: string, x: number, y: number, size: number, width: number, scale: number, weight = 800): void {
+  const text = value.trim();
+  if (!text) return;
+  ctx.save();
+  ctx.translate(x * scale, y * scale);
+  ctx.rotate(TICKET_ANGLE);
+  ctx.fillStyle = '#141414';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  let drawSize = size * scale;
+  font(ctx, weight, drawSize);
+  const minSize = Math.max(16, 18 * scale);
+  while (drawSize > minSize && ctx.measureText(text).width > width * scale) {
+    drawSize -= 2;
+    font(ctx, weight, drawSize);
+  }
+  ctx.fillText(fitText(ctx, text, width * scale, drawSize, weight), 0, 0);
+  ctx.restore();
+}
+
+function drawTicketDays(ctx: CanvasRenderingContext2D, days: number, scale: number): void {
+  const text = String(Math.max(0, days));
+  ctx.save();
+  ctx.translate(TICKET_SLOTS.days.x * scale, TICKET_SLOTS.days.y * scale);
+  ctx.rotate(TICKET_ANGLE);
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = '#141414';
+  let size = TICKET_SLOTS.days.size * scale;
+  font(ctx, 800, size);
+  const minSize = Math.max(16, 18 * scale);
+  while (size > minSize && ctx.measureText(text).width > TICKET_SLOTS.days.width * scale) {
+    size -= 2;
+    font(ctx, 800, size);
+  }
+  ctx.fillText(text, 0, 0);
+  const numberWidth = ctx.measureText(text).width;
+  const unitScale = size / (TICKET_SLOTS.days.size * scale);
+  ctx.fillStyle = '#59536e';
+  font(ctx, 700, TICKET_SLOTS.unit.size * scale * unitScale);
+  ctx.fillText('天', numberWidth + TICKET_SLOTS.unit.gap * scale, 0);
+  ctx.restore();
+}
+
+async function renderTicket(result: CardResult): Promise<HTMLCanvasElement> {
+  const canvas = document.createElement('canvas');
+  const artwork = await loadImage(TICKET_ARTWORK);
+  canvas.width = artwork.naturalWidth;
+  canvas.height = artwork.naturalHeight;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return canvas;
+  ctx.drawImage(artwork, 0, 0);
+  const scale = artwork.naturalWidth / TICKET_WIDTH;
+  drawTicketLine(ctx, result.profileNickname, TICKET_SLOTS.name.x, TICKET_SLOTS.name.y, TICKET_SLOTS.name.size, TICKET_SLOTS.name.width, scale);
+  drawTicketLine(ctx, result.startDate, TICKET_SLOTS.date.x, TICKET_SLOTS.date.y, TICKET_SLOTS.date.size, TICKET_SLOTS.date.width, scale);
+  drawTicketDays(ctx, result.days, scale);
+  drawTicketLine(ctx, result.eventTitle, TICKET_SLOTS.event.x, TICKET_SLOTS.event.y, TICKET_SLOTS.event.size, TICKET_SLOTS.event.width, scale);
+  return canvas;
 }
 
 const SCOREBOARD_ARTWORK = './artwork/scoreboard-card.png';
@@ -219,6 +274,7 @@ function renderTable(ctx: CanvasRenderingContext2D, result: CardResult): void {
 export async function renderCard(result: CardResult, template: TemplateId, width = 1080, height = 1440): Promise<HTMLCanvasElement> {
   if (template === 'badge') return renderBadge(result);
   if (template === 'scoreboard') return renderScoreboard(result);
+  if (template === 'ticket') return renderTicket(result);
   const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
   const ctx = canvas.getContext('2d'); if (!ctx) return canvas;
   try {
@@ -227,7 +283,6 @@ export async function renderCard(result: CardResult, template: TemplateId, width
   } catch {
     drawFallback(ctx, template, width, height);
   }
-  if (template === 'ticket') renderTicket(ctx, result);
-  else renderTable(ctx, result);
+  renderTable(ctx, result);
   return canvas;
 }

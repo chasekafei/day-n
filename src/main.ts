@@ -93,11 +93,11 @@ function saveCurrent(): void {
 }
 
 function usesPhotoCard(current: TemplateId = template): boolean {
-  return current === 'badge' || current === 'scoreboard';
+  return current === 'badge' || current === 'scoreboard' || current === 'ticket';
 }
 
 function cardPreview(card: CardResult): string {
-  if (usesPhotoCard()) return `<img id="share-card" class="share-card" alt="${template === 'badge' ? '球迷证' : '记分牌'}">`;
+  if (usesPhotoCard()) return `<img id="share-card" class="share-card" alt="${({ ticket: '票据', scoreboard: '记分牌', badge: '球迷证' } as Record<string, string>)[template] || '分享卡'}">`;
   const artwork = `./artwork/${template === 'table' ? 'table-base-v3-01.png' : `${template}-base-01.png`}`;
   return `<div class="card-preview ${template} with-art" style="background-image:url('${artwork}')">
     <div class="preview-top"><span>${PRODUCT_NAME}</span><span>${escapeHTML(focusDisplayName(card.focus, card.nickname))}</span></div>
@@ -136,7 +136,7 @@ function eventsView(): string {
 
 function resultView(): string {
   if (!result) return homeView();
-  return shell(`<section class="result-content"><div class="result-heading"><button class="back-button" data-action="home">‹</button><div><p class="eyebrow">YOUR DATE CARD</p><h1>这一天，记下来了。</h1></div><button class="text-button" data-action="home">重新选择</button></div><div class="card-stage">${cardPreview(result)}</div>${usesPhotoCard() ? `<div class="badge-fields"><label>姓名<input id="card-nickname" value="${escapeHTML(userNickname)}" maxlength="16" placeholder="例如：MouT.me"></label><label>地区<input id="card-region" value="${escapeHTML(userRegion)}" maxlength="16" placeholder="例如：广东 广州"></label></div>` : `<label class="card-profile-field">我的昵称（可选）<input id="card-nickname" value="${escapeHTML(userNickname)}" maxlength="24" placeholder="例如：小王的第 N 天"></label>`}<div class="template-tabs">${(['ticket', 'scoreboard', 'badge', 'table'] as TemplateId[]).map(id => `<button class="${template === id ? 'active' : ''}" data-template="${id}">${({ ticket: '票据', scoreboard: '记分牌', badge: '工作证', table: '球台' } as Record<TemplateId, string>)[id]}</button>`).join('')}</div><div class="result-actions"><button class="result-action-button" data-action="save">保存到相册 <span>↓</span></button><button class="result-action-button" data-action="share">发布图文 <span>↗</span></button><button class="result-action-button" data-action="comment">带图评论 <span>✎</span></button></div><p class="data-note">统计按${PRODUCT_NAME}收录的重大事件计算 · 数据截至 ${EVENT_DATA.data_as_of}</p></section>`, 'home');
+  return shell(`<section class="result-content"><div class="result-heading"><button class="back-button" data-action="home">‹</button><div><p class="eyebrow">YOUR DATE CARD</p><h1>这一天，记下来了。</h1></div><button class="text-button" data-action="home">重新选择</button></div><div class="card-stage">${cardPreview(result)}</div>${template === 'ticket' ? `<label class="card-profile-field">观赛人<input id="card-nickname" value="${escapeHTML(userNickname)}" maxlength="16" placeholder="例如：小王"></label>` : usesPhotoCard() ? `<div class="badge-fields"><label>姓名<input id="card-nickname" value="${escapeHTML(userNickname)}" maxlength="16" placeholder="例如：MouT.me"></label><label>地区<input id="card-region" value="${escapeHTML(userRegion)}" maxlength="16" placeholder="例如：广东 广州"></label></div>` : `<label class="card-profile-field">我的昵称（可选）<input id="card-nickname" value="${escapeHTML(userNickname)}" maxlength="24" placeholder="例如：小王的第 N 天"></label>`}<div class="template-tabs">${(['ticket', 'scoreboard', 'badge', 'table'] as TemplateId[]).map(id => `<button class="${template === id ? 'active' : ''}" data-template="${id}">${({ ticket: '票据', scoreboard: '记分牌', badge: '工作证', table: '球台' } as Record<TemplateId, string>)[id]}</button>`).join('')}</div><div class="result-actions"><button class="result-action-button" data-action="save">保存到相册 <span>↓</span></button><button class="result-action-button" data-action="share">发布图文 <span>↗</span></button><button class="result-action-button" data-action="comment">带图评论 <span>✎</span></button></div><p class="data-note">统计按${PRODUCT_NAME}收录的重大事件计算 · 数据截至 ${EVENT_DATA.data_as_of}</p></section>`, 'home');
 }
 
 function presetIntervalCard(preset: (typeof PRESET_INTERVALS)[number]): string {
