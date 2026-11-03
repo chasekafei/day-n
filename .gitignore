@@ -10,7 +10,8 @@ ref/
 !.env.example
 .artifacts/
 
-# 调研参考图片仅保留本地，不进入代码仓库
+# 设计草稿和调研参考图片仅保留本地，不进入代码仓库
+/design/
 /docs/references/**/*.[jJ][pP][gG]
 /docs/references/**/*.[jJ][pP][eE][gG]
 /docs/references/**/*.[pP][nN][gG]
