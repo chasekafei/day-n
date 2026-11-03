@@ -10,6 +10,8 @@ export type CalendarRecord = {
   nickname: string;
   profileNickname: string;
   region: string;
+  eventTitle: string;
+  days: number;
   lastOpen: string;
 };
 
@@ -27,10 +29,12 @@ export function readRecord(): CalendarRecord | null {
       startEventId: value.startEventId || null,
       approx: Boolean(value.approx),
       dayZero: Boolean(value.dayZero),
-      template: (value.template as string) === 'calendar' ? 'badge' : value.template || 'ticket',
+      template: (value.template as string) === 'calendar' ? 'badge' : (value.template as string) === 'table' ? 'ticket' : value.template || 'ticket',
       nickname: value.nickname || '',
       profileNickname: value.profileNickname || '',
       region: value.region || '',
+      eventTitle: value.eventTitle || '',
+      days: typeof value.days === 'number' && value.days > 0 ? value.days : 0,
       lastOpen: value.lastOpen || '',
     };
   } catch {

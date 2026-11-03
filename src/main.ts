@@ -61,8 +61,46 @@ function focusDisplayName(currentFocus: Focus, nickname = ''): string {
   return currentFocus === 'custom' && nickname.trim() ? nickname.trim() : focusLabels[currentFocus];
 }
 
+const SHARE_TEMPLATES: TemplateId[] = ['ticket', 'badge', 'scoreboard'];
+const TEMPLATE_LABELS: Record<TemplateId, string> = { ticket: '票据', badge: '工作证', scoreboard: '记分牌', table: '球台' };
+
+function canGenerateEntry(): boolean {
+  const dateReady = /^\d{4}-\d{2}-\d{2}$/.test(customDate) && customDate <= today;
+  if (focus === 'custom') return Boolean(customPerson.trim()) && dateReady;
+  if (entryMethod === 'date') return dateReady;
+  return Boolean(selected);
+}
+
+function arrowIcon(): string {
+  return `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h12M13 6l6 6-6 6"/></svg>`;
+}
+
+function actionIcon(kind: 'save' | 'share' | 'comment'): string {
+  const paths = {
+    save: '<path d="M12 4v10"/><path d="m8 10 4 4 4-4"/><path d="M5 20h14"/>',
+    share: '<path d="M21 4 10.8 14.2"/><path d="M21 4 14.2 21l-3.4-7.4L3.4 10.2 21 4Z"/>',
+    comment: '<path d="M7.2 17.2 5 20.2V16A7.2 7.2 0 1 1 7.2 17.2Z"/>',
+  };
+  return `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">${paths[kind]}</svg>`;
+}
+
+function refreshGenerateReady(): void {
+  app.querySelector('.entry-generate')?.classList.toggle('is-ready', canGenerateEntry());
+}
+
+function activeTemplate(): TemplateId {
+  if (!SHARE_TEMPLATES.includes(template)) template = 'ticket';
+  return template;
+}
+
+function syncCard(): void {
+  if (!result) return;
+  saveCurrent();
+  void paintShareCard();
+}
+
 function entryGenerateButton(): string {
-  return `<div class="entry-generate-wrap"><button class="entry-generate" data-action="generate-entry">生成入坑卡 <span>→</span></button></div>`;
+  return `<div class="entry-generate-wrap"><button class="entry-generate${canGenerateEntry() ? ' is-ready' : ''}" data-action="generate-entry"><span>生成入坑卡</span>${arrowIcon()}</button></div>`;
 }
 
 function entrySelector(page: 'home' | 'events'): string {
@@ -75,11 +113,7 @@ function entrySelector(page: 'home' | 'events'): string {
   const searchId = page === 'home' ? 'home-event-search' : 'event-search';
   const visibleList = page === 'home' ? list : list.slice(0, 60);
   const entryTabs = `<div class="entry-method-tabs"><button class="${entryMethod === 'event' ? 'active' : ''}" data-entry-method="event">通过事件选择日期</button><button class="${entryMethod === 'date' ? 'active' : ''}" data-entry-method="date">手动选择日期</button></div>`;
-  const selectionNote = selected && entryMethod === 'event'
-    ? `<div class="entry-selection-note"><span>从此入坑</span><strong>${displayDate(selected.date)} · ${escapeHTML(shortEventTitle(selected))}</strong></div>`
-    : entryMethod === 'event'
-      ? '<p class="entry-selection-hint">选择一个事件，就以这一天作为你的入坑时间。</p>'
-      : '';
+  const selectionNote = entryMethod === 'event' && !selected ? '<p class="entry-selection-hint">选择一个事件，就以这一天作为你的入坑时间。</p>' : '';
   const content = entryMethod === 'date'
     ? `<div class="manual-entry-panel"><label>入坑时间<input id="manual-date" type="date" value="${customDate}" max="${today}"></label><p>选定日期后，点击底部“生成”创建入坑卡。</p></div>`
     : `${selectionNote}<div class="home-search search-row"><input id="${searchId}" value="${escapeHTML(query)}" placeholder="搜索赛事、名场面或年份"></div><div class="filter-row"><button class="filter-chip ${year === 'all' ? 'active' : ''}" data-year="all">全部年份</button>${years.map(value => `<button class="filter-chip ${year === value ? 'active' : ''}" data-year="${value}">${value}</button>`).join('')}</div><div class="filter-row type-filters"><button class="filter-chip ${type === 'all' ? 'active' : ''}" data-type="all">全部类型</button>${types.map(value => `<button class="filter-chip ${type === value ? 'active' : ''}" data-type="${value}">${typeLabels[value] || value}</button>`).join('')}</div><div class="library-note">${page === 'home' ? '全部事件库' : '事件库'} · 已收录 ${visibleList.length} 条可选事件 · 数据截至 ${EVENT_DATA.data_as_of}</div><div class="event-list ${page === 'events' ? 'large' : 'home-library'}">${visibleList.length ? visibleList.map(eventRow).join('') : '<div class="empty-state">没有找到匹配事件</div>'}</div>`;
@@ -88,7 +122,7 @@ function entrySelector(page: 'home' | 'events'): string {
 
 function saveCurrent(): void {
   if (!result) return;
-  const record: CalendarRecord = { focus, startDate: result.startDate, startEventId: selected?.id || null, approx: result.eventTitle.startsWith('约 '), dayZero: false, template, nickname: result.nickname, profileNickname: result.profileNickname, region: result.region, lastOpen: today };
+  const record: CalendarRecord = { focus, startDate: result.startDate, startEventId: selected?.id || null, approx: result.eventTitle.startsWith('约 '), dayZero: false, template, nickname: result.nickname, profileNickname: result.profileNickname, region: result.region, eventTitle: result.eventTitle, days: result.days, lastOpen: today };
   writeRecord(record);
 }
 
@@ -112,31 +146,44 @@ function cardPreview(card: CardResult): string {
 }
 
 function shell(content: string, active: string): string {
-  return `<main class="app-shell"><header class="topbar"><button class="brand-button" data-action="home"><span class="brand-mark">日</span><span><b>${PRODUCT_NAME}</b><small>从那天起，到今天</small></span></button><button class="icon-button" data-action="about" aria-label="打开说明">?</button></header>${content}<nav class="bottom-nav"><button class="${active === 'home' ? 'active' : ''}" data-action="home"><span>⌂</span>首页</button><button class="${active === 'relations' ? 'active' : ''}" data-action="relations"><span>⌁</span>日期间隔</button><button class="${active === 'events' ? 'active' : ''}" data-action="events"><span>▤</span>事件库</button></nav></main>`;
+  return `<main class="app-shell"><header class="topbar"><button class="brand-button" data-action="home"><span class="brand-mark">日</span><span><b>${PRODUCT_NAME}</b><small>从这一场，开始热爱</small></span></button><button class="icon-button" data-action="about" aria-label="打开说明">?</button></header>${content}<nav class="bottom-nav"><button class="${active === 'home' ? 'active' : ''}" data-action="home"><span>⌂</span>首页</button><button class="${active === 'relations' ? 'active' : ''}" data-action="relations"><span>⌁</span>日期间隔</button><button class="${active === 'events' ? 'active' : ''}" data-action="events"><span>▤</span>事件库</button></nav></main>`;
 }
 
 function homeView(): string {
   const record = readRecord();
-  const savedHint = record ? `<button class="saved-banner" data-action="resume"><span>继续上次记录</span><strong>${displayDate(record.startDate)} · ${escapeHTML(focusDisplayName(record.focus, record.nickname))}</strong><span>›</span></button>` : '';
+  const savedHint = record ? `<button class="saved-banner" data-action="resume"><span>继续上次的记录</span><strong>${displayDate(record.startDate)} · ${escapeHTML(focusDisplayName(record.focus, record.nickname))}</strong><span>›</span></button>` : '';
   return shell(`<section class="home-content">
-    <div class="hero-copy"><p class="eyebrow">TABLE TENNIS / DATE RECORD</p><h1>重要日期，<br><em>值得记住。</em></h1><p>从入坑日到下一次见证，<br>把乒乓球迷的时间写成一张卡。</p></div>
     ${savedHint}
-    <section class="entry-library"><div class="section-heading"><h2>我从这天入坑</h2><span>先选关注对象</span></div><div class="focus-grid">${(Object.keys(focusLabels) as Focus[]).map(key => `<button class="focus-card ${focus === key ? 'selected' : ''}" data-focus="${key}"><span class="focus-dot ${key}"></span><b>${focusLabels[key]}</b><small>${key === 'shatou' ? '共同事件与混双冠军' : key === 'custom' ? '填写自己的日期' : '个人与相关赛事'}</small></button>`).join('')}</div>${entrySelector('home')}</section>
+    <section class="entry-library"><div class="section-heading"><h2>我从这天入坑</h2></div><div class="focus-grid">${(Object.keys(focusLabels) as Focus[]).map(key => `<button class="focus-card ${focus === key ? 'selected' : ''}" data-focus="${key}"><span class="focus-dot ${key}"></span><b>${focusLabels[key]}</b><small>${key === 'shatou' ? '共同事件与混双冠军' : key === 'custom' ? '填写自己的日期' : '个人与相关赛事'}</small></button>`).join('')}</div>${entrySelector('home')}</section>
   </section>`, 'home');
 }
 
 function eventRow(item: EventItem): string {
   const color = item.type.indexOf('冠军') >= 0 ? 'red' : item.type.indexOf('名场面') >= 0 ? 'yellow' : 'green';
-  return `<button class="event-row ${selected?.id === item.id ? 'selected' : ''}" data-event="${item.id}" aria-pressed="${selected?.id === item.id}"><time>${item.date.slice(0, 4)}<b>${item.date.slice(5).replace('-', '.')}</b></time><span class="event-dot ${color}"></span><span class="event-info"><b>${escapeHTML(shortEventTitle(item))}</b><small>${typeLabels[item.type] || item.type} · ${item.who}</small></span><span class="chevron">${selected?.id === item.id ? '✓' : '›'}</span></button>`;
+  const mark = selected?.id === item.id ? '<span class="entry-mark">从此入坑</span>' : '<span class="entry-choice">选择</span>';
+  return `<button class="event-row ${selected?.id === item.id ? 'selected' : ''}" data-event="${item.id}" aria-pressed="${selected?.id === item.id}"><time>${item.date.slice(0, 4)}<b>${item.date.slice(5).replace('-', '.')}</b></time><span class="event-dot ${color}"></span><span class="event-info"><b>${escapeHTML(shortEventTitle(item))}</b><small>${typeLabels[item.type] || item.type} · ${item.who}</small></span>${mark}</button>`;
 }
 
 function eventsView(): string {
   return shell(`<section class="events-content"><div class="page-heading"><button class="back-button" data-action="home">‹</button><div><p class="eyebrow">ENTRY DATE</p><h1>选择你的入坑时刻</h1></div></div><div class="focus-strip">${(Object.keys(focusLabels) as Focus[]).map(key => `<button class="${focus === key ? 'active' : ''}" data-focus="${key}">${focusLabels[key]}</button>`).join('')}</div>${entrySelector('events')}</section>`, 'events');
 }
 
+function cardFields(): string {
+  if (!result) return '';
+  const current = activeTemplate();
+  const name = `<label>${current === 'ticket' ? '观赛人' : '姓名'}<input id="card-nickname" value="${escapeHTML(userNickname)}" maxlength="16" placeholder="例如：小王"></label>`;
+  const date = `<label>入坑时间<input id="card-date" type="date" value="${result.startDate}" max="${today}"></label>`;
+  const days = `<label>入坑天数<input id="card-days" type="number" min="1" max="9999" inputmode="numeric" value="${result.days}"></label>`;
+  if (current === 'ticket') return `<div class="card-fields">${name.replace('<label>', '<label class="wide">')}${date}${days}<label class="wide">入坑节点<input id="card-event" value="${escapeHTML(result.eventTitle)}" maxlength="40"></label></div>`;
+  return `<div class="card-fields">${name}<label>地区<input id="card-region" value="${escapeHTML(userRegion)}" maxlength="16" placeholder="例如：广东 广州"></label>${date}${days}</div>`;
+}
+
 function resultView(): string {
   if (!result) return homeView();
-  return shell(`<section class="result-content"><div class="result-heading"><button class="back-button" data-action="home">‹</button><div><p class="eyebrow">YOUR DATE CARD</p><h1>这一天，记下来了。</h1></div><button class="text-button" data-action="home">重新选择</button></div><div class="card-stage">${cardPreview(result)}</div>${template === 'ticket' ? `<label class="card-profile-field">观赛人<input id="card-nickname" value="${escapeHTML(userNickname)}" maxlength="16" placeholder="例如：小王"></label>` : usesPhotoCard() ? `<div class="badge-fields"><label>姓名<input id="card-nickname" value="${escapeHTML(userNickname)}" maxlength="16" placeholder="例如：MouT.me"></label><label>地区<input id="card-region" value="${escapeHTML(userRegion)}" maxlength="16" placeholder="例如：广东 广州"></label></div>` : `<label class="card-profile-field">我的昵称（可选）<input id="card-nickname" value="${escapeHTML(userNickname)}" maxlength="24" placeholder="例如：小王的第 N 天"></label>`}<div class="template-tabs">${(['ticket', 'scoreboard', 'badge', 'table'] as TemplateId[]).map(id => `<button class="${template === id ? 'active' : ''}" data-template="${id}">${({ ticket: '票据', scoreboard: '记分牌', badge: '工作证', table: '球台' } as Record<TemplateId, string>)[id]}</button>`).join('')}</div><div class="result-actions"><button class="result-action-button" data-action="save">保存到相册 <span>↓</span></button><button class="result-action-button" data-action="share">发布图文 <span>↗</span></button><button class="result-action-button" data-action="comment">带图评论 <span>✎</span></button></div><p class="data-note">统计按${PRODUCT_NAME}收录的重大事件计算 · 数据截至 ${EVENT_DATA.data_as_of}</p></section>`, 'home');
+  activeTemplate();
+  const tabs = SHARE_TEMPLATES.map(id => `<button class="${template === id ? 'active' : ''}" data-template="${id}">${TEMPLATE_LABELS[id]}</button>`).join('');
+  const actions = `<div class="result-actions"><button class="result-action-button" data-action="save">${actionIcon('save')}<span>保存到相册</span></button><button class="result-action-button" data-action="share">${actionIcon('share')}<span>发布图文</span></button><button class="result-action-button" data-action="comment">${actionIcon('comment')}<span>带图评论</span></button></div>`;
+  return shell(`<section class="result-content"><div class="result-heading"><button class="back-button" data-action="home" aria-label="返回">‹</button><h1>入坑日分享图</h1><button class="text-button" data-action="home">重新选择</button></div><div class="card-stage">${cardPreview(result)}</div>${cardFields()}<div class="template-tabs">${tabs}</div>${actions}<p class="data-note">统计按${PRODUCT_NAME}收录的重大事件计算 · 数据截至 ${EVENT_DATA.data_as_of}</p></section>`, 'home');
 }
 
 function presetIntervalCard(preset: (typeof PRESET_INTERVALS)[number]): string {
@@ -224,7 +271,7 @@ function bindEvents(): void {
     else if (action === 'events') { view = 'events'; render(); }
     else if (action === 'relations') { view = 'relations'; render(); }
     else if (action === 'about') { view = 'about'; render(); }
-    else if (action === 'resume') { const record = readRecord(); if (record) { focus = record.focus; customPerson = record.nickname || ''; userNickname = record.profileNickname || ''; userRegion = record.region || ''; template = record.template; customDate = record.startDate; selected = record.startEventId ? EVENT_DATA.items.find(item => item.id === record.startEventId) || null : null; result = selectedResult(record.startDate, selected ? shortEventTitle(selected) : (record.focus === 'custom' ? `${customPerson || '自定义对象'} 的入坑日` : '手动选择的入坑日'), record.approx); view = 'result'; render(); } }
+    else if (action === 'resume') { const record = readRecord(); if (record) { focus = record.focus; customPerson = record.nickname || ''; userNickname = record.profileNickname || ''; userRegion = record.region || ''; template = SHARE_TEMPLATES.includes(record.template) ? record.template : 'ticket'; customDate = record.startDate; selected = record.startEventId ? EVENT_DATA.items.find(item => item.id === record.startEventId) || null : null; const fallback = selected ? shortEventTitle(selected) : (record.focus === 'custom' ? `${customPerson || '自定义对象'} 的入坑日` : '手动选择的入坑日'); result = selectedResult(record.startDate, record.eventTitle || fallback, !record.eventTitle && record.approx); if (record.eventTitle) result.eventTitle = record.eventTitle; if (record.days > 0) result.days = record.days; view = 'result'; render(); } }
     else if (action === 'generate-entry') {
       if (focus === 'custom') {
         customPerson = app.querySelector<HTMLInputElement>('#custom-person')?.value.trim() || customPerson.trim();
@@ -267,11 +314,28 @@ function bindEvents(): void {
   const targetInput = app.querySelector<HTMLInputElement>('#target-date'); if (targetInput) targetInput.addEventListener('change', () => { targetDate = targetInput.value || today; render(); });
   const relationDateAInput = app.querySelector<HTMLInputElement>('#relation-date-a'); if (relationDateAInput) relationDateAInput.addEventListener('change', () => { relationDateA = relationDateAInput.value || relationDateA; render(); });
   const relationDateBInput = app.querySelector<HTMLInputElement>('#relation-date-b'); if (relationDateBInput) relationDateBInput.addEventListener('change', () => { relationDateB = relationDateBInput.value || relationDateB; render(); });
-  const customDateInput = app.querySelector<HTMLInputElement>('#custom-date'); if (customDateInput) customDateInput.addEventListener('change', () => { customDate = customDateInput.value || customDate; });
-  const customPersonInput = app.querySelector<HTMLInputElement>('#custom-person'); if (customPersonInput) customPersonInput.addEventListener('input', () => { customPerson = customPersonInput.value; });
-  const manualDateInput = app.querySelector<HTMLInputElement>('#manual-date'); if (manualDateInput) manualDateInput.addEventListener('change', () => { customDate = manualDateInput.value || customDate; });
-  const cardNicknameInput = app.querySelector<HTMLInputElement>('#card-nickname'); if (cardNicknameInput) cardNicknameInput.addEventListener('input', () => { userNickname = cardNicknameInput.value.trim(); if (result) { result.profileNickname = userNickname; saveCurrent(); } void paintShareCard(); });
-  const cardRegionInput = app.querySelector<HTMLInputElement>('#card-region'); if (cardRegionInput) cardRegionInput.addEventListener('input', () => { userRegion = cardRegionInput.value.trim(); if (result) { result.region = userRegion; saveCurrent(); } void paintShareCard(); });
+  const customDateInput = app.querySelector<HTMLInputElement>('#custom-date'); if (customDateInput) customDateInput.addEventListener('change', () => { customDate = customDateInput.value || customDate; refreshGenerateReady(); });
+  const customPersonInput = app.querySelector<HTMLInputElement>('#custom-person'); if (customPersonInput) customPersonInput.addEventListener('input', () => { customPerson = customPersonInput.value; refreshGenerateReady(); });
+  const manualDateInput = app.querySelector<HTMLInputElement>('#manual-date'); if (manualDateInput) manualDateInput.addEventListener('change', () => { customDate = manualDateInput.value || customDate; refreshGenerateReady(); });
+  const cardNicknameInput = app.querySelector<HTMLInputElement>('#card-nickname'); if (cardNicknameInput) cardNicknameInput.addEventListener('input', () => { userNickname = cardNicknameInput.value.trim(); if (result) result.profileNickname = userNickname; syncCard(); });
+  const cardRegionInput = app.querySelector<HTMLInputElement>('#card-region'); if (cardRegionInput) cardRegionInput.addEventListener('input', () => { userRegion = cardRegionInput.value.trim(); if (result) result.region = userRegion; syncCard(); });
+  const cardDateInput = app.querySelector<HTMLInputElement>('#card-date'); if (cardDateInput) cardDateInput.addEventListener('change', () => {
+    const value = cardDateInput.value;
+    if (!result || !/^\d{4}-\d{2}-\d{2}$/.test(value) || value > today) return;
+    result.startDate = value;
+    customDate = value;
+    result.days = daysSince(value, today, true) || 1;
+    const daysInput = app.querySelector<HTMLInputElement>('#card-days');
+    if (daysInput) daysInput.value = String(result.days);
+    syncCard();
+  });
+  const cardDaysInput = app.querySelector<HTMLInputElement>('#card-days'); if (cardDaysInput) cardDaysInput.addEventListener('input', () => {
+    const value = Math.floor(Number(cardDaysInput.value));
+    if (!result || !Number.isFinite(value) || value < 1) return;
+    result.days = Math.min(9999, value);
+    syncCard();
+  });
+  const cardEventInput = app.querySelector<HTMLInputElement>('#card-event'); if (cardEventInput) cardEventInput.addEventListener('input', () => { if (result) result.eventTitle = cardEventInput.value; syncCard(); });
 }
 
 render();
