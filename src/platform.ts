@@ -278,7 +278,7 @@ export async function saveImage(dataUrl: string): Promise<void> {
     const link = document.createElement('a');
     if (!('download' in link)) throw new Error('此浏览器不支持下载，请在小红书中保存图片。');
     link.href = dataUrl;
-    link.download = '乒乓历-' + Date.now() + '.png';
+    link.download = '入坑日第N天-' + Date.now() + '.png';
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -316,8 +316,8 @@ export async function shareImage(dataUrl: string, kind: 'comment' | 'note', snap
   const filePath = await imagePath(dataUrl, false);
   const version = await clientVersion();
   await invoke('postNote', {
-    title: '乒乓历｜记录重要日期',
-    content: '用乒乓历记录自己的入坑日、赛事纪念日和两个事件之间的日期关系。可以生成日期卡，保存到相册、晒到评论或发布成笔记。发布前请检查图片、正文和是否挂载小工具。',
+    title: '入坑日第 N 天｜记录重要日期',
+    content: '用入坑日第 N 天记录自己的入坑日、赛事纪念日和两个事件之间的日期关系。可以生成日期卡，保存到相册、晒到评论或发布成笔记。发布前请检查图片、正文和是否挂载小工具。',
     ...(version >= 9430 ? { pageType: 'photo_publish' } : {}),
     mediaInfo: { image_resources: [{ url: filePath }] },
   }, 180_000);

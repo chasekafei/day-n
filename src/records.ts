@@ -8,6 +8,7 @@ export type CalendarRecord = {
   dayZero: boolean;
   template: TemplateId;
   nickname: string;
+  profileNickname: string;
   lastOpen: string;
 };
 
@@ -25,8 +26,9 @@ export function readRecord(): CalendarRecord | null {
       startEventId: value.startEventId || null,
       approx: Boolean(value.approx),
       dayZero: Boolean(value.dayZero),
-      template: value.template || 'ticket',
+      template: (value.template as string) === 'calendar' ? 'badge' : value.template || 'ticket',
       nickname: value.nickname || '',
+      profileNickname: value.profileNickname || '',
       lastOpen: value.lastOpen || '',
     };
   } catch {

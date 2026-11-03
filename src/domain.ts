@@ -2,8 +2,10 @@ import { EVENT_DATA } from './data.ts';
 
 export type Focus = 'wang-chuqin' | 'sun-yingsha' | 'shatou' | 'custom';
 export type Mode = 'entry' | 'between' | 'target' | 'special';
-export type TemplateId = 'ticket' | 'scoreboard' | 'calendar' | 'table';
+export type TemplateId = 'ticket' | 'scoreboard' | 'badge' | 'table';
 export type EventItem = (typeof EVENT_DATA.items)[number];
+
+export const PRODUCT_NAME = '入坑日第 N 天';
 
 export const focusLabels: Record<Focus, string> = {
   'wang-chuqin': '王楚钦',
@@ -22,6 +24,7 @@ export const typeLabels: Record<string, string> = {
   '里程碑': '里程碑',
   '活动': '活动',
   '杂志': '活动',
+  '综艺': '电视节目',
   '单打·奖牌': '奖牌',
   '混双·奖牌': '奖牌',
 };
@@ -67,7 +70,22 @@ export function eventMatchesFocus(event: EventItem, focus: Focus): boolean {
 }
 
 export function shortEventTitle(event: EventItem): string {
-  const title = event.event.replace(/[：:—].*$/, '').trim();
+  const overrides: Record<string, string> = {
+    A014: '亚锦赛（日惹）混双亚军',
+    A075: '休斯敦世乒赛混双夺冠后拥抱（第 1 次拥抱）',
+    A085: '德班世乒赛混双卫冕后互动（第 2 次拥抱）',
+    A099: '巴黎奥运混双夺冠后拥抱（第 4 次拥抱）',
+    A129: '多哈世乒赛混双夺冠后拥抱（第 3 次拥抱）',
+    A053: '国乒男队队长交接',
+    A077: '休斯敦世乒赛女双卫冕',
+    A160: '第十三届全运会男单半决赛',
+  };
+  if (overrides[event.id]) return overrides[event.id];
+  let title = event.event.trim();
+  title = title.replace(/[（(][^）)]*(?:\d+\s*[:：]\s*\d+|与|对阵|胜|负|\/|出场|带伤|同批|任副队长)[^）)]*[）)]/g, '').trim();
+  title = title.replace(/[：—；].*$/, '').trim();
+  // Keep score notation such as 4:0 out of public event names while preserving location parentheses.
+  title = title.replace(/\s{2,}/g, ' ').replace(/[：，；]+$/g, '').trim();
   return title.length > 24 ? title.slice(0, 24) + '…' : title;
 }
 

@@ -93,7 +93,7 @@ days = calendarDayDifference(startDate, targetDate)
 - 莎头：默认只统计双方共同参与的混双、混团等项目。
 - 自定义：默认只展示总天数和事件数量，除非用户选择了可映射的关注范围。
 
-统计只计算 `startDate <= event.date <= targetDate` 的完整日期事件。卡片写明“按乒乓历收录的重大赛事统计”，避免把统计结果表达成完整官方生涯统计。
+统计只计算 `startDate <= event.date <= targetDate` 的完整日期事件。卡片写明“按入坑日第 N 天收录的重大赛事统计”，避免把统计结果表达成完整官方生涯统计。
 
 ## 6. 称号和特殊数字
 

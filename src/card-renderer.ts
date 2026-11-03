@@ -1,4 +1,4 @@
-import { type Focus, type TemplateId, displayDate, focusLabels } from './domain.ts';
+import { type Focus, type TemplateId, displayDate, focusLabels, PRODUCT_NAME } from './domain.ts';
 
 export type CardResult = {
   focus: Focus;
@@ -12,87 +12,131 @@ export type CardResult = {
   singles: number;
   team: number;
   nickname: string;
+  profileNickname: string;
 };
 
-function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number): void {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+const ARTWORK_PATHS: Record<TemplateId, string> = {
+  ticket: './artwork/ticket-base-01.jpg',
+  scoreboard: './artwork/scoreboard-base-01.jpg',
+  badge: './artwork/badge-base-01.png',
+  table: './artwork/table-base-v3-01.jpg',
+};
+
+function font(ctx: CanvasRenderingContext2D, weight: number, size: number): void {
+  ctx.font = `${weight} ${size}px Arial, "PingFang SC", "Microsoft YaHei", sans-serif`;
 }
 
-function font(ctx: CanvasRenderingContext2D, weight: number, size: number): void { ctx.font = `${weight} ${size}px Arial, "PingFang SC", "Microsoft YaHei", sans-serif`; }
+function focusName(result: CardResult): string {
+  return result.focus === 'custom' && result.nickname.trim() ? result.nickname.trim() : focusLabels[result.focus];
+}
 
-export function renderCard(result: CardResult, template: TemplateId, width = 1080, height = 1440): HTMLCanvasElement {
+function fitText(ctx: CanvasRenderingContext2D, value: string, maxWidth: number, size: number, weight = 600): string {
+  font(ctx, weight, size);
+  if (ctx.measureText(value).width <= maxWidth) return value;
+  let output = value;
+  while (output.length > 1 && ctx.measureText(`${output}…`).width > maxWidth) output = output.slice(0, -1);
+  return `${output}…`;
+}
+
+function drawText(ctx: CanvasRenderingContext2D, value: string, x: number, y: number, size: number, color: string, maxWidth: number, weight = 600): void {
+  ctx.fillStyle = color;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText(fitText(ctx, value, maxWidth, size, weight), x, y);
+}
+
+function loadArtwork(template: TemplateId): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error(`卡片底图加载失败：${template}`));
+    image.src = ARTWORK_PATHS[template];
+  });
+}
+
+function drawFallback(ctx: CanvasRenderingContext2D, template: TemplateId, width: number, height: number): void {
+  const colors: Record<TemplateId, [string, string]> = {
+    ticket: ['#f1e4cc', '#174f43'], scoreboard: ['#0c211c', '#f5c842'], badge: ['#5c0f2e', '#f3d6aa'], table: ['#0d8793', '#f5c842'],
+  };
+  const [background, accent] = colors[template];
+  ctx.fillStyle = background; ctx.fillRect(0, 0, width, height);
+  ctx.strokeStyle = accent; ctx.lineWidth = Math.max(3, width / 260); ctx.strokeRect(40, 40, width - 80, height - 80);
+}
+
+function renderTicket(ctx: CanvasRenderingContext2D, result: CardResult): void {
+  const dark = '#3d2b1f', green = '#174f43', red = '#b5451b', muted = '#786a5a';
+  drawText(ctx, PRODUCT_NAME, 88, 116, 24, green, 430, 800);
+  drawText(ctx, focusName(result), 760, 116, 23, green, 230, 700);
+  drawText(ctx, result.eventTitle, 90, 370, 25, muted, 720, 600);
+  drawText(ctx, String(result.days), 88, 650, 190, red, 450, 900);
+  drawText(ctx, '天', 500, 642, 54, dark, 90, 900);
+  drawText(ctx, result.title, 90, 790, 48, dark, 760, 900);
+  drawText(ctx, result.subtitle, 94, 840, 25, muted, 740, 600);
+  drawText(ctx, `入坑日 ${displayDate(result.startDate)}`, 92, 1085, 24, dark, 350, 700);
+  drawText(ctx, `${focusName(result)} · 见证 ${result.total} 个重要冠军`, 92, 1140, 24, dark, 760, 700);
+  drawText(ctx, `混双 ${result.mixed}  ·  单打 ${result.singles}  ·  团体 ${result.team}`, 92, 1330, 22, muted, 760, 600);
+  drawText(ctx, '日期记录', 92, 1380, 20, muted, 300, 700);
+}
+
+function renderScoreboard(ctx: CanvasRenderingContext2D, result: CardResult): void {
+  const white = '#fffdf4', yellow = '#f5f000', muted = '#b9d0c5';
+  drawText(ctx, PRODUCT_NAME, 82, 126, 24, yellow, 500, 800);
+  drawText(ctx, result.eventTitle, 84, 430, 25, muted, 820, 600);
+  drawText(ctx, String(result.days), 82, 730, 190, yellow, 500, 900);
+  drawText(ctx, 'DAYS', 90, 790, 32, yellow, 180, 800);
+  drawText(ctx, result.title, 86, 920, 48, white, 850, 900);
+  drawText(ctx, result.subtitle, 90, 970, 25, muted, 820, 600);
+  drawText(ctx, `${focusName(result)}  ·  ${displayDate(result.startDate)}`, 90, 1250, 27, white, 820, 700);
+  drawText(ctx, `MIXED ${result.mixed}    SINGLES ${result.singles}    TEAM ${result.team}`, 90, 1320, 22, yellow, 820, 700);
+  drawText(ctx, 'ENTRY SCOREBOARD', 90, 1380, 20, muted, 400, 700);
+}
+
+function renderBadge(ctx: CanvasRenderingContext2D, result: CardResult): void {
+  const cream = '#f7e6ca', gold = '#f1c88e', muted = '#f5d9ba', burgundy = '#5c0f2e';
+  ctx.fillStyle = 'rgba(18, 3, 12, .16)'; ctx.fillRect(92, 330, 296, 430);
+  ctx.fillStyle = 'rgba(247, 230, 202, .92)'; ctx.fillRect(112, 350, 256, 390);
+  ctx.fillStyle = burgundy; ctx.beginPath(); ctx.arc(240, 490, 68, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = gold; ctx.beginPath(); ctx.arc(240, 467, 30, 0, Math.PI * 2); ctx.fill(); ctx.fillRect(200, 515, 80, 100);
+  drawText(ctx, PRODUCT_NAME, 100, 175, 26, cream, 500, 800);
+  drawText(ctx, `距离我成为${focusName(result)}的球迷已经`, 438, 395, 26, cream, 500, 700);
+  drawText(ctx, `${result.days} 天了`, 438, 500, 104, gold, 480, 900);
+  drawText(ctx, result.title, 438, 555, 30, cream, 500, 800);
+  drawText(ctx, result.subtitle, 438, 600, 22, muted, 500, 600);
+  drawText(ctx, '昵称 / NICKNAME', 438, 700, 18, muted, 500, 700);
+  drawText(ctx, result.profileNickname || 'MY ENTRY', 438, 740, 28, cream, 500, 800);
+  drawText(ctx, '入坑事件', 438, 875, 18, muted, 500, 700);
+  drawText(ctx, result.eventTitle, 438, 920, 24, cream, 500, 700);
+  drawText(ctx, `入坑日 ${displayDate(result.startDate)}`, 438, 970, 22, muted, 500, 600);
+  drawText(ctx, `NO. ${result.focus === 'wang-chuqin' ? '20000511' : result.focus === 'sun-yingsha' ? '20001104' : result.focus === 'shatou' ? '20005114' : 'CUSTOM'}`, 100, 1250, 32, cream, 600, 900);
+  drawText(ctx, `${focusName(result)} · ${PRODUCT_NAME}`, 100, 1340, 21, muted, 700, 700);
+}
+
+function renderTable(ctx: CanvasRenderingContext2D, result: CardResult): void {
+  const white = '#f7ffff', yellow = '#ffd12a', dark = '#073b45';
+  ctx.fillStyle = dark; ctx.globalAlpha = 0.18; ctx.fillRect(70, 120, 930, 510); ctx.globalAlpha = 1;
+  drawText(ctx, PRODUCT_NAME, 88, 150, 26, white, 520, 800);
+  drawText(ctx, focusName(result), 760, 150, 24, yellow, 230, 700);
+  drawText(ctx, String(result.days), 88, 390, 180, white, 450, 900);
+  drawText(ctx, '天', 480, 382, 54, yellow, 90, 900);
+  drawText(ctx, result.title, 92, 500, 46, yellow, 820, 900);
+  drawText(ctx, result.subtitle, 96, 550, 24, white, 820, 600);
+  drawText(ctx, result.eventTitle, 94, 1210, 25, white, 820, 600);
+  drawText(ctx, `入坑日 ${displayDate(result.startDate)}`, 94, 1280, 25, yellow, 400, 700);
+  drawText(ctx, `${focusName(result)} · 日期记录`, 94, 1360, 22, white, 700, 700);
+}
+
+export async function renderCard(result: CardResult, template: TemplateId, width = 1080, height = 1440): Promise<HTMLCanvasElement> {
   const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
   const ctx = canvas.getContext('2d'); if (!ctx) return canvas;
-  const scale = width / 1080; ctx.scale(scale, scale); const w = 1080; const h = height / scale;
-  ctx.fillStyle = '#FFFBF0'; ctx.fillRect(0, 0, w, h);
-  const dark = '#3D2B1F', red = '#B5451B', green = '#174F43', yellow = '#F5C842', muted = '#8A7761';
-  if (template === 'scoreboard') return renderScoreboard(canvas, result, width, height);
-  if (template === 'calendar') return renderCalendar(canvas, result, width, height);
-  if (template === 'table') return renderTable(canvas, result, width, height);
-
-  ctx.fillStyle = '#F0E4CC'; ctx.fillRect(42, 56, w - 84, h - 112);
-  ctx.strokeStyle = '#D6B47A'; ctx.lineWidth = 3; roundRect(ctx, 42, 56, w - 84, h - 112, 24); ctx.stroke();
-  ctx.setLineDash([8, 12]); ctx.beginPath(); ctx.moveTo(820, 78); ctx.lineTo(820, h - 78); ctx.stroke(); ctx.setLineDash([]);
-  ctx.fillStyle = green; ctx.fillRect(42, 56, 18, h - 112);
-  font(ctx, 700, 24); ctx.fillStyle = muted; ctx.fillText('PINGPONG CALENDAR', 88, 108);
-  font(ctx, 900, 50); ctx.fillStyle = dark; ctx.fillText('乒乓历', 88, 170);
-  font(ctx, 600, 22); ctx.fillStyle = muted; ctx.fillText('ENTRY DAY / DATE RELATION', 90, 208);
-  font(ctx, 700, 24); ctx.fillStyle = red; ctx.fillText('乒乓历', 880, 108);
-  font(ctx, 900, 30); ctx.fillStyle = dark; ctx.fillText('入坑第', 92, 310);
-  font(ctx, 900, 210); ctx.fillStyle = red; ctx.fillText(String(result.days), 88, 520);
-  font(ctx, 900, 54); ctx.fillStyle = dark; ctx.fillText('天', 530, 510);
-  font(ctx, 900, 44); ctx.fillStyle = dark; ctx.fillText(result.title, 92, 620);
-  font(ctx, 600, 25); ctx.fillStyle = muted; ctx.fillText(result.subtitle, 94, 665);
-  ctx.strokeStyle = '#C9AE7F'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(92, 712); ctx.lineTo(760, 712); ctx.stroke();
-  font(ctx, 700, 24); ctx.fillStyle = dark; ctx.fillText('入坑事件', 92, 770);
-  font(ctx, 600, 28); ctx.fillText(result.eventTitle.slice(0, 24), 92, 818);
-  font(ctx, 600, 23); ctx.fillStyle = muted; ctx.fillText(displayDate(result.startDate), 92, 862);
-  font(ctx, 700, 23); ctx.fillStyle = dark; ctx.fillText(`${focusLabels[result.focus]} · 见证 ${result.total} 个重要冠军`, 92, 950);
-  font(ctx, 600, 21); ctx.fillStyle = muted; ctx.fillText(`混双 ${result.mixed}  ·  单打 ${result.singles}  ·  团体 ${result.team}`, 92, 990);
-  ctx.fillStyle = yellow; ctx.beginPath(); ctx.arc(946, 960, 52, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(946, 960, 15, 0, Math.PI * 2); ctx.fill();
-  font(ctx, 700, 22); ctx.fillStyle = muted; ctx.fillText('乒乓历 · 日期记录', 92, h - 106);
-  if (result.nickname) { ctx.textAlign = 'right'; ctx.fillText(result.nickname, 988, h - 106); ctx.textAlign = 'left'; }
+  try {
+    const artwork = await loadArtwork(template);
+    ctx.drawImage(artwork, 0, 0, width, height);
+  } catch {
+    drawFallback(ctx, template, width, height);
+  }
+  if (template === 'ticket') renderTicket(ctx, result);
+  else if (template === 'scoreboard') renderScoreboard(ctx, result);
+  else if (template === 'badge') renderBadge(ctx, result);
+  else renderTable(ctx, result);
   return canvas;
 }
-
-function renderScoreboard(canvas: HTMLCanvasElement, result: CardResult, width: number, height: number): HTMLCanvasElement {
-  const ctx = canvas.getContext('2d')!; const s = width / 1080; ctx.save(); ctx.scale(s, s); const h = height / s;
-  ctx.fillStyle = '#101B1A'; ctx.fillRect(0, 0, 1080, h);
-  ctx.strokeStyle = '#D5A632'; ctx.lineWidth = 4; roundRect(ctx, 40, 40, 1000, h - 80, 24); ctx.stroke();
-  font(ctx, 700, 26); ctx.fillStyle = '#F5C842'; ctx.fillText('PINGPONG / DATE SCOREBOARD', 80, 110);
-  font(ctx, 900, 190); ctx.fillStyle = '#F5C842'; ctx.fillText(String(result.days), 80, 390);
-  font(ctx, 900, 48); ctx.fillStyle = '#F5C842'; ctx.fillText('DAYS', 90, 452);
-  font(ctx, 800, 44); ctx.fillStyle = '#FFFFFF'; ctx.fillText(result.title, 86, 560);
-  ctx.strokeStyle = '#B5451B'; ctx.lineWidth = 12; ctx.beginPath(); ctx.moveTo(90, 620); ctx.lineTo(990, 620); ctx.stroke();
-  font(ctx, 700, 30); ctx.fillStyle = '#FFFFFF'; ctx.fillText(`${focusLabels[result.focus]}  /  ${result.eventTitle.slice(0, 20)}`, 90, 710);
-  font(ctx, 600, 28); ctx.fillStyle = '#B6C5C0'; ctx.fillText(`MIXED ${result.mixed}    SINGLES ${result.singles}    TEAM ${result.team}`, 90, 780);
-  font(ctx, 600, 24); ctx.fillStyle = '#F5C842'; ctx.fillText(`${displayDate(result.startDate)}  ·  乒乓历`, 90, h - 100); ctx.restore(); return canvas;
-}
-
-function renderCalendar(canvas: HTMLCanvasElement, result: CardResult, width: number, height: number): HTMLCanvasElement {
-  const ctx = canvas.getContext('2d')!; const s = width / 1080; ctx.save(); ctx.scale(s, s); const h = height / s;
-  ctx.fillStyle = '#F7F0DE'; ctx.fillRect(0, 0, 1080, h); ctx.fillStyle = '#FFFFFF'; ctx.fillRect(68, 96, 944, h - 180);
-  ctx.strokeStyle = '#3D2B1F'; ctx.lineWidth = 4; ctx.strokeRect(68, 96, 944, h - 180);
-  font(ctx, 900, 38); ctx.fillStyle = '#B5451B'; ctx.fillText('MY PINGPONG DAY', 110, 170);
-  font(ctx, 900, 230); ctx.fillStyle = '#3D2B1F'; ctx.fillText(String(result.days), 100, 480);
-  font(ctx, 800, 44); ctx.fillText('天', 720, 470);
-  font(ctx, 900, 46); ctx.fillStyle = '#B5451B'; ctx.fillText(result.title, 110, 610);
-  font(ctx, 600, 28); ctx.fillStyle = '#7B6958'; ctx.fillText(result.eventTitle.slice(0, 22), 110, 690); ctx.fillText(displayDate(result.startDate), 110, 740);
-  ctx.strokeStyle = '#F5C842'; ctx.lineWidth = 15; ctx.beginPath(); ctx.moveTo(110, 830); ctx.lineTo(890, 830); ctx.stroke();
-  font(ctx, 700, 28); ctx.fillStyle = '#3D2B1F'; ctx.fillText(`见证 ${result.total} 个重要冠军`, 110, 900); ctx.restore(); return canvas;
-}
-
-function renderTable(canvas: HTMLCanvasElement, result: CardResult, width: number, height: number): HTMLCanvasElement {
-  const ctx = canvas.getContext('2d')!; const s = width / 1080; ctx.save(); ctx.scale(s, s); const h = height / s;
-  ctx.fillStyle = '#DDEFF1'; ctx.fillRect(0, 0, 1080, h); ctx.fillStyle = '#126579'; ctx.fillRect(60, 80, 960, h - 160);
-  ctx.fillStyle = '#FFFFFF'; ctx.fillRect(540, 80, 7, h - 160);
-  font(ctx, 700, 27); ctx.fillStyle = '#DDEFF1'; ctx.fillText('入坑那天', 110, 160); ctx.fillText('今天', 720, 160);
-  font(ctx, 900, 160); ctx.fillStyle = '#FFFFFF'; ctx.fillText(displayDate(result.startDate).slice(5).replace('.', '/'), 90, 390); ctx.fillText(String(result.days), 650, 390);
-  font(ctx, 900, 34); ctx.fillText('START', 110, 460); ctx.fillText('DAYS', 730, 460);
-  font(ctx, 800, 42); ctx.fillStyle = '#F5C842'; ctx.fillText(result.title, 110, 620);
-  font(ctx, 600, 28); ctx.fillStyle = '#DDEFF1'; ctx.fillText(result.eventTitle.slice(0, 22), 110, 700); ctx.fillText(`乒乓历 · ${focusLabels[result.focus]}`, 110, 770); ctx.restore(); return canvas;
-}
-
