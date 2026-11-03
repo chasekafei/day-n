@@ -16,9 +16,8 @@ export type CardResult = {
   region: string;
 };
 
-const ARTWORK_PATHS: Record<Exclude<TemplateId, 'badge'>, string> = {
+const ARTWORK_PATHS: Record<Exclude<TemplateId, 'badge' | 'scoreboard'>, string> = {
   ticket: './artwork/ticket-base-01.png',
-  scoreboard: './artwork/scoreboard-base-01.png',
   table: './artwork/table-base-v3-01.png',
 };
 
@@ -102,17 +101,73 @@ function renderTicket(ctx: CanvasRenderingContext2D, result: CardResult): void {
   drawText(ctx, '日期记录', 92, 1380, 20, muted, 300, 700);
 }
 
-function renderScoreboard(ctx: CanvasRenderingContext2D, result: CardResult): void {
-  const white = '#fffdf4', yellow = '#f5f000', muted = '#b9d0c5';
-  drawText(ctx, PRODUCT_NAME, 82, 126, 24, yellow, 500, 800);
-  drawText(ctx, result.eventTitle, 84, 430, 25, muted, 820, 600);
-  drawText(ctx, String(result.days), 82, 730, 190, yellow, 500, 900);
-  drawText(ctx, 'DAYS', 90, 790, 32, yellow, 180, 800);
-  drawText(ctx, result.title, 86, 920, 48, white, 850, 900);
-  drawText(ctx, result.subtitle, 90, 970, 25, muted, 820, 600);
-  drawText(ctx, `${focusName(result)}  ·  ${displayDate(result.startDate)}`, 90, 1250, 27, white, 820, 700);
-  drawText(ctx, `MIXED ${result.mixed}    SINGLES ${result.singles}    TEAM ${result.team}`, 90, 1320, 22, yellow, 820, 700);
-  drawText(ctx, 'ENTRY SCOREBOARD', 90, 1380, 20, muted, 400, 700);
+const SCOREBOARD_ARTWORK = './artwork/scoreboard-card.png';
+const SCOREBOARD_WIDTH = 1254;
+const SCOREBOARD_DIGITS = {
+  centers: [164, 308, 445, 581],
+  y: 794,
+  size: 168,
+  stretch: 1.44,
+  maxWidth: 108,
+};
+const SCOREBOARD_SLOTS = {
+  name: { x: 795, y: 746, size: 36, width: 270 },
+  region: { x: 788, y: 834, size: 36, width: 270 },
+  date: { x: 780, y: 922, size: 38, width: 240 },
+};
+
+function drawScoreboardField(ctx: CanvasRenderingContext2D, value: string, x: number, y: number, size: number, width: number, scale: number): void {
+  const text = value.trim();
+  if (!text) return;
+  fittedSize(ctx, text, width * scale, size * scale, 800);
+  ctx.fillStyle = '#12182b';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText(text, x * scale, y * scale);
+}
+
+function drawScoreboardDays(ctx: CanvasRenderingContext2D, days: number, scale: number): void {
+  const text = String(Math.max(0, days));
+  const padded = text.length <= 4 ? text.padStart(4, '0') : text;
+  ctx.fillStyle = '#f5f2f6';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  if (padded.length === 4) {
+    let size = SCOREBOARD_DIGITS.size * scale;
+    ctx.font = `${size}px "Arial Black", Impact, Arial, sans-serif`;
+    const widest = Math.max(...padded.split('').map(char => ctx.measureText(char).width));
+    if (widest > SCOREBOARD_DIGITS.maxWidth * scale) size *= (SCOREBOARD_DIGITS.maxWidth * scale) / widest;
+    ctx.font = `${size}px "Arial Black", Impact, Arial, sans-serif`;
+    padded.split('').forEach((char, index) => {
+      ctx.save();
+      ctx.translate(SCOREBOARD_DIGITS.centers[index] * scale, SCOREBOARD_DIGITS.y * scale);
+      ctx.scale(1, SCOREBOARD_DIGITS.stretch);
+      ctx.fillText(char, 0, 0);
+      ctx.restore();
+    });
+    return;
+  }
+  const left = SCOREBOARD_DIGITS.centers[0] * scale;
+  const right = SCOREBOARD_DIGITS.centers[3] * scale;
+  const size = fittedSize(ctx, padded, right - left, 120 * scale, 900);
+  ctx.font = `${size}px "Arial Black", Impact, Arial, sans-serif`;
+  ctx.fillText(padded, (left + right) / 2, SCOREBOARD_DIGITS.y * scale);
+}
+
+async function renderScoreboard(result: CardResult): Promise<HTMLCanvasElement> {
+  const canvas = document.createElement('canvas');
+  const artwork = await loadImage(SCOREBOARD_ARTWORK);
+  canvas.width = artwork.naturalWidth;
+  canvas.height = artwork.naturalHeight;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return canvas;
+  ctx.drawImage(artwork, 0, 0);
+  const scale = artwork.naturalWidth / SCOREBOARD_WIDTH;
+  drawScoreboardDays(ctx, result.days, scale);
+  drawScoreboardField(ctx, result.profileNickname, SCOREBOARD_SLOTS.name.x, SCOREBOARD_SLOTS.name.y, SCOREBOARD_SLOTS.name.size, SCOREBOARD_SLOTS.name.width, scale);
+  drawScoreboardField(ctx, result.region, SCOREBOARD_SLOTS.region.x, SCOREBOARD_SLOTS.region.y, SCOREBOARD_SLOTS.region.size, SCOREBOARD_SLOTS.region.width, scale);
+  drawScoreboardField(ctx, displayDate(result.startDate), SCOREBOARD_SLOTS.date.x, SCOREBOARD_SLOTS.date.y, SCOREBOARD_SLOTS.date.size, SCOREBOARD_SLOTS.date.width, scale);
+  return canvas;
 }
 
 function drawBadgeField(ctx: CanvasRenderingContext2D, value: string, x: number, y: number, size: number, width: number, scale: number): void {
@@ -163,6 +218,7 @@ function renderTable(ctx: CanvasRenderingContext2D, result: CardResult): void {
 
 export async function renderCard(result: CardResult, template: TemplateId, width = 1080, height = 1440): Promise<HTMLCanvasElement> {
   if (template === 'badge') return renderBadge(result);
+  if (template === 'scoreboard') return renderScoreboard(result);
   const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
   const ctx = canvas.getContext('2d'); if (!ctx) return canvas;
   try {
@@ -172,7 +228,6 @@ export async function renderCard(result: CardResult, template: TemplateId, width
     drawFallback(ctx, template, width, height);
   }
   if (template === 'ticket') renderTicket(ctx, result);
-  else if (template === 'scoreboard') renderScoreboard(ctx, result);
   else renderTable(ctx, result);
   return canvas;
 }
