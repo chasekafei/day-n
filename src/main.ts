@@ -3,7 +3,7 @@ import './paper.css';
 import { EVENT_DATA } from './data.ts';
 import { dateDifference, displayDate, eventsForFocus, focusLabels, PRODUCT_NAME, statsSince, titleForDays, todayString, typeLabels, yearsForFocus, daysSince, shortEventTitle, type Focus, type TemplateId, type EventItem } from './domain.ts';
 import { renderCard, type CardResult } from './card-renderer.ts';
-import { readRecord, writeRecord, type CalendarRecord } from './records.ts';
+import { writeRecord, type CalendarRecord } from './records.ts';
 import { saveImage, shareImage, isNative } from './platform.ts';
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
@@ -150,7 +150,7 @@ function methodTabs(): string {
 }
 
 function homeView(): string {
-  const hits = `<div class="poster"><img class="poster-art" src="./artwork/paper/home-top.png" alt="入坑日第 N 天，从这一场，开始热爱"><button class="poster-hit hit-resume" data-action="resume" aria-label="继续上次的记录"></button></div>`;
+  const hits = `<div class="poster"><img class="poster-art" src="./artwork/paper/home-top.png" alt="入坑日第 N 天，从这一场，开始热爱"></div>`;
   return shell(`<section class="home-content poster-page">${hits}<div class="poster-body">${focusPicks()}${methodTabs()}${entrySelector('home', true)}</div></section>`, 'home');
 }
 
@@ -273,7 +273,6 @@ function bindEvents(): void {
     else if (action === 'events') { view = 'events'; render(); }
     else if (action === 'relations') { view = 'relations'; render(); }
     else if (action === 'about') { view = 'about'; render(); }
-    else if (action === 'resume') { const record = readRecord(); if (record) { focus = record.focus; customPerson = record.nickname || ''; userNickname = record.profileNickname || ''; userRegion = record.region || ''; template = SHARE_TEMPLATES.includes(record.template) ? record.template : 'ticket'; customDate = record.startDate; selected = record.startEventId ? EVENT_DATA.items.find(item => item.id === record.startEventId) || null : null; const fallback = selected ? shortEventTitle(selected) : (record.focus === 'custom' ? `${customPerson || '自定义对象'} 的入坑日` : '手动选择的入坑日'); result = selectedResult(record.startDate, record.eventTitle || fallback, !record.eventTitle && record.approx); if (record.eventTitle) result.eventTitle = record.eventTitle; if (record.days > 0) result.days = record.days; view = 'result'; render(); } }
     else if (action === 'generate-entry') {
       if (focus === 'custom') {
         customPerson = app.querySelector<HTMLInputElement>('#custom-person')?.value.trim() || customPerson.trim();
