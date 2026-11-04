@@ -35,7 +35,7 @@ html, body, #app {
   color: var(--ink);
   clip-path: var(--torn);
 }
-.page-home.app-shell { padding: 0 0 190px; }
+.page-home.app-shell { padding: 0 0 calc(78px + min(460px, 74vw) * 134 / 422 + 48px); }
 .page-result.app-shell { padding: 0 0 140px; }
 .page-home .home-content { padding-top: 0; margin-top: 0; }
 .page-home .topbar,
@@ -173,8 +173,6 @@ html, body, #app {
 
 .home-search input,
 .search-row input,
-.custom-entry-panel,
-.manual-entry-panel,
 .custom-entry-panel input,
 .manual-entry-panel input,
 .card-fields input,
@@ -502,7 +500,7 @@ html, body, #app {
   left: 50%;
   bottom: 78px;
   transform: translateX(-50%);
-  width: min(680px, calc(100% - 28px));
+  width: min(460px, 74%);
   margin: 0;
   pointer-events: none;
 }
@@ -521,7 +519,7 @@ html, body, #app {
   height: auto;
   min-height: 0;
   padding: 0;
-  aspect-ratio: 471 / 150;
+  aspect-ratio: 422 / 134;
   border-radius: 0;
   background: url('./artwork/paper/list-generate.png') center / 100% 100% no-repeat;
   color: transparent;
