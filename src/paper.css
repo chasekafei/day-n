@@ -41,12 +41,13 @@ html, body, #app {
 }
 .page-result.app-shell {
   padding: 0 0 140px;
-  padding-top: calc(10px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px)));
+  /* 信号栏下面还有小红书自己的返回和菜单，标题图里的返回要整行让开。 */
+  padding-top: calc(8px + 44px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px)));
 }
 .page-relations.app-shell,
 .page-events.app-shell,
 .page-about.app-shell {
-  padding-top: max(24px, calc(10px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px))));
+  padding-top: max(24px, calc(8px + 44px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px))));
 }
 .page-home .home-content { padding-top: 0; margin-top: 0; }
 .page-home .topbar,
@@ -60,8 +61,7 @@ html, body, #app {
 }
 .page-home .brand-button,
 .page-result .brand-button { display: none; }
-.page-home .icon-button,
-.page-result .icon-button {
+.page-home .icon-button {
   position: fixed;
   top: 14px;
   right: max(14px, calc(50vw - 360px + 14px));
@@ -72,9 +72,6 @@ html, body, #app {
   clip-path: none;
   background: rgba(255, 253, 251, .9);
   box-shadow: 0 4px 12px rgba(80, 40, 80, .12);
-}
-.page-result .icon-button {
-  top: calc(24px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px)));
 }
 
 .hero-poster { position: relative; min-height: 196px; margin: 6px 0 8px; padding: 18px 0 8px; }

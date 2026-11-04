@@ -160,11 +160,63 @@ const SCOREBOARD_ARTWORK = './artwork/scoreboard-card.png';
 const SCOREBOARD_WIDTH = 1254;
 const SCOREBOARD_DIGITS = {
   centers: [164, 308, 445, 581],
-  y: 794,
+  // 蓝格视觉中心。按笔画外框居中，而不是 textBaseline=middle。
+  // 小红书里没有 Arial Black，middle 基线会把数字往下拉出牌面。
+  y: 776,
   size: 168,
   stretch: 1.44,
   maxWidth: 108,
+  maxHeight: 196,
 };
+const SCOREBOARD_DIGIT_FONT = '"Arial Black", Impact, Arial, sans-serif';
+
+type DigitStamp = {
+  canvas: HTMLCanvasElement;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  advance: number;
+  origin: number;
+};
+
+function stampDigit(char: string, size: number): DigitStamp | null {
+  const origin = Math.ceil(size);
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.ceil(size * 3);
+  canvas.height = Math.ceil(size * 3);
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  if (!ctx) return null;
+  ctx.font = `${size}px ${SCOREBOARD_DIGIT_FONT}`;
+  ctx.fillStyle = '#f5f2f6';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText(char, origin, origin + size);
+  const advance = ctx.measureText(char).width;
+  const { data, width, height } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  let minX = width;
+  let minY = height;
+  let maxX = -1;
+  let maxY = -1;
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      if (data[(y * width + x) * 4 + 3] > 16) {
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+  if (maxX < 0) return null;
+  return { canvas, x: minX, y: minY, w: maxX - minX + 1, h: maxY - minY + 1, advance, origin };
+}
+
+function paintDigit(ctx: CanvasRenderingContext2D, stamp: DigitStamp, cx: number, cy: number): void {
+  const destH = stamp.h * SCOREBOARD_DIGITS.stretch;
+  const destX = cx - stamp.advance / 2 + (stamp.x - stamp.origin);
+  ctx.drawImage(stamp.canvas, stamp.x, stamp.y, stamp.w, stamp.h, destX, cy - destH / 2, stamp.w, destH);
+}
 const SCOREBOARD_SLOTS = {
   name: { x: 795, y: 746, size: 36, width: 270 },
   region: { x: 788, y: 834, size: 36, width: 270 },
@@ -184,29 +236,32 @@ function drawScoreboardField(ctx: CanvasRenderingContext2D, value: string, x: nu
 function drawScoreboardDays(ctx: CanvasRenderingContext2D, days: number, scale: number): void {
   const text = String(Math.max(0, days));
   const padded = text.length <= 4 ? text.padStart(4, '0') : text;
-  ctx.fillStyle = '#f5f2f6';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
   if (padded.length === 4) {
+    const measure = document.createElement('canvas').getContext('2d');
+    if (!measure) return;
     let size = SCOREBOARD_DIGITS.size * scale;
-    ctx.font = `${size}px "Arial Black", Impact, Arial, sans-serif`;
-    const widest = Math.max(...padded.split('').map(char => ctx.measureText(char).width));
+    measure.font = `${size}px ${SCOREBOARD_DIGIT_FONT}`;
+    const widest = Math.max(...padded.split('').map(char => measure.measureText(char).width));
     if (widest > SCOREBOARD_DIGITS.maxWidth * scale) size *= (SCOREBOARD_DIGITS.maxWidth * scale) / widest;
-    ctx.font = `${size}px "Arial Black", Impact, Arial, sans-serif`;
-    padded.split('').forEach((char, index) => {
-      ctx.save();
-      ctx.translate(SCOREBOARD_DIGITS.centers[index] * scale, SCOREBOARD_DIGITS.y * scale);
-      ctx.scale(1, SCOREBOARD_DIGITS.stretch);
-      ctx.fillText(char, 0, 0);
-      ctx.restore();
+    let stamps = padded.split('').map(char => stampDigit(char, size));
+    const tallest = Math.max(...stamps.map(stamp => stamp ? stamp.h * SCOREBOARD_DIGITS.stretch : 0));
+    const limit = SCOREBOARD_DIGITS.maxHeight * scale;
+    if (tallest > limit) {
+      size *= limit / tallest;
+      stamps = padded.split('').map(char => stampDigit(char, size));
+    }
+    stamps.forEach((stamp, index) => {
+      if (!stamp) return;
+      paintDigit(ctx, stamp, SCOREBOARD_DIGITS.centers[index] * scale, SCOREBOARD_DIGITS.y * scale);
     });
     return;
   }
   const left = SCOREBOARD_DIGITS.centers[0] * scale;
   const right = SCOREBOARD_DIGITS.centers[3] * scale;
   const size = fittedSize(ctx, padded, right - left, 120 * scale, 900);
-  ctx.font = `${size}px "Arial Black", Impact, Arial, sans-serif`;
-  ctx.fillText(padded, (left + right) / 2, SCOREBOARD_DIGITS.y * scale);
+  const stamp = stampDigit(padded, size);
+  if (!stamp) return;
+  paintDigit(ctx, stamp, (left + right) / 2, SCOREBOARD_DIGITS.y * scale);
 }
 
 async function renderScoreboard(result: CardResult): Promise<HTMLCanvasElement> {

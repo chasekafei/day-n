@@ -173,7 +173,8 @@ function cardPreview(card: CardResult): string {
 }
 
 function shell(content: string, active: string, page = active): string {
-  return `<main class="app-shell page-${page}"><header class="topbar"><button class="brand-button" data-action="home"><span class="brand-mark">日</span><span><b>${PRODUCT_NAME}</b><small>从这一场，开始热爱</small></span></button><button class="icon-button" data-action="about" aria-label="打开说明">?</button></header>${content}<nav class="bottom-nav"><button class="${active === 'home' ? 'active' : ''}" data-action="home"><span>⌂</span>首页</button><button class="${active === 'relations' ? 'active' : ''}" data-action="relations"><span>⌁</span>日期间隔</button><button class="${active === 'events' ? 'active' : ''}" data-action="events"><span>▤</span>事件库</button></nav></main>`;
+  const help = page === 'home' ? '<button class="icon-button" data-action="about" aria-label="打开说明">?</button>' : '';
+  return `<main class="app-shell page-${page}"><header class="topbar"><button class="brand-button" data-action="home"><span class="brand-mark">日</span><span><b>${PRODUCT_NAME}</b><small>从这一场，开始热爱</small></span></button>${help}</header>${content}<nav class="bottom-nav"><button class="${active === 'home' ? 'active' : ''}" data-action="home"><span>⌂</span>首页</button><button class="${active === 'relations' ? 'active' : ''}" data-action="relations"><span>⌁</span>日期间隔</button><button class="${active === 'events' ? 'active' : ''}" data-action="events"><span>▤</span>事件库</button></nav></main>`;
 }
 
 function focusPicks(): string {
