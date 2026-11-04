@@ -1,7 +1,7 @@
 import './styles.css';
 import './paper.css';
 import { EVENT_DATA } from './data.ts';
-import { dateDifference, displayDate, eventsForFocus, focusLabels, PRODUCT_NAME, statsSince, titleForDays, todayString, typeLabels, yearsForFocus, daysSince, shortEventTitle, type Focus, type TemplateId, type EventItem } from './domain.ts';
+import { dateDifference, displayDate, eventsForFocus, focusLabels, PRODUCT_NAME, statsSince, titleForDays, todayString, typesForFocus, yearsForFocus, daysSince, shortEventTitle, type Focus, type TemplateId, type EventItem } from './domain.ts';
 import { renderCard, type CardResult } from './card-renderer.ts';
 import { writeRecord, type CalendarRecord } from './records.ts';
 import { saveImage, shareImage, isNative } from './platform.ts';
@@ -100,14 +100,14 @@ function entrySelector(page: 'home' | 'events', hideTabs = false): string {
   }
   const list = eventsForFocus(focus, query, year, type);
   const years = yearsForFocus(focus).slice(0, 8);
-  const types = [...new Set(eventsForFocus(focus).map(item => item.type))].filter(item => !item.includes('纪事')).slice(0, 8);
+  const types = typesForFocus(focus);
   const searchId = page === 'home' ? 'home-event-search' : 'event-search';
   const visibleList = page === 'home' ? list : list.slice(0, 60);
   const entryTabs = `<div class="entry-method-tabs"><button class="${entryMethod === 'event' ? 'active' : ''}" data-entry-method="event">通过事件选择日期</button><button class="${entryMethod === 'date' ? 'active' : ''}" data-entry-method="date">手动选择日期</button></div>`;
   const selectionNote = entryMethod === 'event' && !selected ? '<p class="entry-selection-hint">选择一个事件，就以这一天作为你的入坑时间。</p>' : '';
   const content = entryMethod === 'date'
     ? `<div class="manual-entry-panel"><label>入坑时间<input id="manual-date" type="date" value="${customDate}" max="${today}"></label><p>选定日期后，点击底部“生成”创建入坑卡。</p></div>`
-    : `${selectionNote}<div class="home-search search-row"><input id="${searchId}" value="${escapeHTML(query)}" placeholder="搜索赛事、名场面或年份"></div><div class="filter-row"><button class="filter-chip ${year === 'all' ? 'active' : ''}" data-year="all">全部年份</button>${years.map(value => `<button class="filter-chip ${year === value ? 'active' : ''}" data-year="${value}">${value}</button>`).join('')}</div><div class="filter-row type-filters"><button class="filter-chip ${type === 'all' ? 'active' : ''}" data-type="all">全部类型</button>${types.map(value => `<button class="filter-chip ${type === value ? 'active' : ''}" data-type="${value}">${typeLabels[value] || value}</button>`).join('')}</div><div class="library-note">${page === 'home' ? '全部事件库' : '事件库'} · 已收录 ${visibleList.length} 条可选事件 · 数据截至 ${EVENT_DATA.data_as_of}</div><div class="event-list ${page === 'events' ? 'large' : 'home-library'}">${visibleList.length ? visibleList.map(eventRow).join('') : '<div class="empty-state">没有找到匹配事件</div>'}</div>`;
+    : `${selectionNote}<div class="home-search search-row"><input id="${searchId}" value="${escapeHTML(query)}" placeholder="搜索赛事、名场面或年份"></div><div class="filter-row"><button class="filter-chip ${year === 'all' ? 'active' : ''}" data-year="all">全部年份</button>${years.map(value => `<button class="filter-chip ${year === value ? 'active' : ''}" data-year="${value}">${value}</button>`).join('')}</div><div class="filter-row type-filters"><button class="filter-chip ${type === 'all' ? 'active' : ''}" data-type="all">全部类型</button>${types.map(value => `<button class="filter-chip ${type === value ? 'active' : ''}" data-type="${value}">${escapeHTML(value)}</button>`).join('')}</div><div class="library-note">${page === 'home' ? '全部事件库' : '事件库'} · 已收录 ${visibleList.length} 条可选事件 · 数据截至 ${EVENT_DATA.data_as_of}</div><div class="event-list ${page === 'events' ? 'large' : 'home-library'}">${visibleList.length ? visibleList.map(eventRow).join('') : '<div class="empty-state">没有找到匹配事件</div>'}</div>`;
   return `${hideTabs ? '' : entryTabs}${content}${entryGenerateButton()}`;
 }
 

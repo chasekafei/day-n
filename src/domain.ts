@@ -29,6 +29,27 @@ export const typeLabels: Record<string, string> = {
   '混双·奖牌': '奖牌',
 };
 
+const TYPE_ORDER = [
+  '单打·奖牌',
+  '混双·奖牌',
+  '单打·冠军',
+  '双打·冠军',
+  '混双·冠军',
+  '团体·冠军',
+  '混团·冠军',
+  '名场面',
+  '里程碑',
+  '奖项',
+  '活动',
+  '杂志',
+  '综艺',
+  '代言',
+];
+
+export function eventTypeLabel(type: string): string {
+  return typeLabels[type] || type;
+}
+
 function parseDate(value: string): number | null {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
   const [year, month, day] = value.split('-').map(Number);
@@ -98,10 +119,21 @@ export function eventsForFocus(focus: Focus, query = '', year = 'all', type = 'a
   return EVENT_DATA.items.filter(item => {
     if (!eventMatchesFocus(item, focus)) return false;
     if (year !== 'all' && !item.date.startsWith(year)) return false;
-    if (type !== 'all' && item.type !== type) return false;
+    if (type !== 'all' && eventTypeLabel(item.type) !== type) return false;
     if (normalized && !(`${item.event} ${item.source}`.toLowerCase().includes(normalized))) return false;
     return true;
   }).sort((a, b) => b.date.localeCompare(a.date));
+}
+
+export function typesForFocus(focus: Focus): string[] {
+  const present = new Set<string>(eventsForFocus(focus).map(item => item.type));
+  const labels: string[] = [];
+  for (const type of [...TYPE_ORDER, ...present]) {
+    if (!present.has(type)) continue;
+    const label = eventTypeLabel(type);
+    if (!labels.includes(label)) labels.push(label);
+  }
+  return labels;
 }
 
 export function statsSince(start: string, target: string, focus: Focus): { total: number; mixed: number; singles: number; team: number } {
