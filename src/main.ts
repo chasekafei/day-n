@@ -1,6 +1,7 @@
 import './styles.css';
+import './paper.css';
 import { EVENT_DATA } from './data.ts';
-import { dateDifference, displayDate, eventsForFocus, focusLabels, PRODUCT_NAME, statsSince, titleForDays, todayString, typeLabels, yearsForFocus, daysSince, shortEventTitle, type Focus, type Mode, type TemplateId, type EventItem } from './domain.ts';
+import { dateDifference, displayDate, eventsForFocus, focusLabels, PRODUCT_NAME, statsSince, titleForDays, todayString, typeLabels, yearsForFocus, daysSince, shortEventTitle, type Focus, type TemplateId, type EventItem } from './domain.ts';
 import { renderCard, type CardResult } from './card-renderer.ts';
 import { readRecord, writeRecord, type CalendarRecord } from './records.ts';
 import { saveImage, shareImage, isNative } from './platform.ts';
@@ -9,7 +10,6 @@ const app = document.querySelector<HTMLDivElement>('#app')!;
 const today = todayString();
 let view: 'home' | 'events' | 'result' | 'relations' | 'about' = 'home';
 let focus: Focus = 'shatou';
-let mode: Mode = 'entry';
 let selected: EventItem | null = null;
 let result: CardResult | null = null;
 let template: TemplateId = 'ticket';
@@ -23,8 +23,8 @@ let userRegion = '';
 let entryMethod: 'event' | 'date' = 'event';
 let relationA: EventItem = EVENT_DATA.items.find(item => item.date === '2024-07-30') || EVENT_DATA.items[0];
 let relationB: EventItem = EVENT_DATA.items.find(item => item.date === '2025-05-24') || EVENT_DATA.items[1];
-let targetDate = today;
-let betweenMode: 'events' | 'dates' = 'events';
+let relationStartKind: 'event' | 'date' = 'event';
+let relationEndKind: 'event' | 'date' = 'event';
 let relationDateA: string = relationA.date;
 let relationDateB: string = relationB.date;
 
@@ -75,15 +75,6 @@ function arrowIcon(): string {
   return `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h12M13 6l6 6-6 6"/></svg>`;
 }
 
-function actionIcon(kind: 'save' | 'share' | 'comment'): string {
-  const paths = {
-    save: '<path d="M12 4v10"/><path d="m8 10 4 4 4-4"/><path d="M5 20h14"/>',
-    share: '<path d="M21 4 10.8 14.2"/><path d="M21 4 14.2 21l-3.4-7.4L3.4 10.2 21 4Z"/>',
-    comment: '<path d="M7.2 17.2 5 20.2V16A7.2 7.2 0 1 1 7.2 17.2Z"/>',
-  };
-  return `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">${paths[kind]}</svg>`;
-}
-
 function refreshGenerateReady(): void {
   app.querySelector('.entry-generate')?.classList.toggle('is-ready', canGenerateEntry());
 }
@@ -103,7 +94,7 @@ function entryGenerateButton(): string {
   return `<div class="entry-generate-wrap"><button class="entry-generate${canGenerateEntry() ? ' is-ready' : ''}" data-action="generate-entry"><span>生成入坑卡</span>${arrowIcon()}</button></div>`;
 }
 
-function entrySelector(page: 'home' | 'events'): string {
+function entrySelector(page: 'home' | 'events', hideTabs = false): string {
   if (focus === 'custom') {
     return `<div class="custom-entry-panel"><p class="entry-panel-lead">写下你的入坑对象和日期，生成专属入坑卡。</p><label>入坑对象<input id="custom-person" value="${escapeHTML(customPerson)}" maxlength="24" placeholder="例如：我喜欢的运动员或组合"></label><label>入坑时间<input id="custom-date" type="date" value="${customDate}" max="${today}"></label></div>${entryGenerateButton()}`;
   }
@@ -117,7 +108,7 @@ function entrySelector(page: 'home' | 'events'): string {
   const content = entryMethod === 'date'
     ? `<div class="manual-entry-panel"><label>入坑时间<input id="manual-date" type="date" value="${customDate}" max="${today}"></label><p>选定日期后，点击底部“生成”创建入坑卡。</p></div>`
     : `${selectionNote}<div class="home-search search-row"><input id="${searchId}" value="${escapeHTML(query)}" placeholder="搜索赛事、名场面或年份"></div><div class="filter-row"><button class="filter-chip ${year === 'all' ? 'active' : ''}" data-year="all">全部年份</button>${years.map(value => `<button class="filter-chip ${year === value ? 'active' : ''}" data-year="${value}">${value}</button>`).join('')}</div><div class="filter-row type-filters"><button class="filter-chip ${type === 'all' ? 'active' : ''}" data-type="all">全部类型</button>${types.map(value => `<button class="filter-chip ${type === value ? 'active' : ''}" data-type="${value}">${typeLabels[value] || value}</button>`).join('')}</div><div class="library-note">${page === 'home' ? '全部事件库' : '事件库'} · 已收录 ${visibleList.length} 条可选事件 · 数据截至 ${EVENT_DATA.data_as_of}</div><div class="event-list ${page === 'events' ? 'large' : 'home-library'}">${visibleList.length ? visibleList.map(eventRow).join('') : '<div class="empty-state">没有找到匹配事件</div>'}</div>`;
-  return `${entryTabs}${content}${entryGenerateButton()}`;
+  return `${hideTabs ? '' : entryTabs}${content}${entryGenerateButton()}`;
 }
 
 function saveCurrent(): void {
@@ -145,27 +136,32 @@ function cardPreview(card: CardResult): string {
   </div>`;
 }
 
-function shell(content: string, active: string): string {
-  return `<main class="app-shell"><header class="topbar"><button class="brand-button" data-action="home"><span class="brand-mark">日</span><span><b>${PRODUCT_NAME}</b><small>从这一场，开始热爱</small></span></button><button class="icon-button" data-action="about" aria-label="打开说明">?</button></header>${content}<nav class="bottom-nav"><button class="${active === 'home' ? 'active' : ''}" data-action="home"><span>⌂</span>首页</button><button class="${active === 'relations' ? 'active' : ''}" data-action="relations"><span>⌁</span>日期间隔</button><button class="${active === 'events' ? 'active' : ''}" data-action="events"><span>▤</span>事件库</button></nav></main>`;
+function shell(content: string, active: string, page = active): string {
+  return `<main class="app-shell page-${page}"><header class="topbar"><button class="brand-button" data-action="home"><span class="brand-mark">日</span><span><b>${PRODUCT_NAME}</b><small>从这一场，开始热爱</small></span></button><button class="icon-button" data-action="about" aria-label="打开说明">?</button></header>${content}<nav class="bottom-nav"><button class="${active === 'home' ? 'active' : ''}" data-action="home"><span>⌂</span>首页</button><button class="${active === 'relations' ? 'active' : ''}" data-action="relations"><span>⌁</span>日期间隔</button><button class="${active === 'events' ? 'active' : ''}" data-action="events"><span>▤</span>事件库</button></nav></main>`;
+}
+
+function focusPicks(): string {
+  return `<div class="focus-picks">${(Object.keys(focusLabels) as Focus[]).map(key => `<button class="focus-pick${focus === key ? ' on' : ''}" data-focus="${key}" aria-pressed="${focus === key}">${focusLabels[key]}</button>`).join('')}</div>`;
+}
+
+function methodTabs(): string {
+  if (focus === 'custom') return '';
+  return `<div class="method-tabs"><button class="method-tab${entryMethod === 'event' ? ' on' : ''}" data-entry-method="event">通过事件选择日期</button><button class="method-tab${entryMethod === 'date' ? ' on' : ''}" data-entry-method="date">手动选择日期</button></div>`;
 }
 
 function homeView(): string {
-  const record = readRecord();
-  const savedHint = record ? `<button class="saved-banner" data-action="resume"><span>继续上次的记录</span><strong>${displayDate(record.startDate)} · ${escapeHTML(focusDisplayName(record.focus, record.nickname))}</strong><span>›</span></button>` : '';
-  return shell(`<section class="home-content">
-    ${savedHint}
-    <section class="entry-library"><div class="section-heading"><h2>我从这天入坑</h2></div><div class="focus-grid">${(Object.keys(focusLabels) as Focus[]).map(key => `<button class="focus-card ${focus === key ? 'selected' : ''}" data-focus="${key}"><span class="focus-dot ${key}"></span><b>${focusLabels[key]}</b><small>${key === 'shatou' ? '共同事件与混双冠军' : key === 'custom' ? '填写自己的日期' : '个人与相关赛事'}</small></button>`).join('')}</div>${entrySelector('home')}</section>
-  </section>`, 'home');
+  const hits = `<div class="poster"><img class="poster-art" src="./artwork/paper/home-top.png" alt="入坑日第 N 天，从这一场，开始热爱"><button class="poster-hit hit-resume" data-action="resume" aria-label="继续上次的记录"></button></div>`;
+  return shell(`<section class="home-content poster-page">${hits}<div class="poster-body">${focusPicks()}${methodTabs()}${entrySelector('home', true)}</div></section>`, 'home');
 }
 
 function eventRow(item: EventItem): string {
-  const color = item.type.indexOf('冠军') >= 0 ? 'red' : item.type.indexOf('名场面') >= 0 ? 'yellow' : 'green';
-  const mark = selected?.id === item.id ? '<span class="entry-mark">从此入坑</span>' : '<span class="entry-choice">选择</span>';
-  return `<button class="event-row ${selected?.id === item.id ? 'selected' : ''}" data-event="${item.id}" aria-pressed="${selected?.id === item.id}"><time>${item.date.slice(0, 4)}<b>${item.date.slice(5).replace('-', '.')}</b></time><span class="event-dot ${color}"></span><span class="event-info"><b>${escapeHTML(shortEventTitle(item))}</b><small>${typeLabels[item.type] || item.type} · ${item.who}</small></span>${mark}</button>`;
+  const picked = selected?.id === item.id;
+  const mark = picked ? '<span class="entry-mark">从此入坑</span>' : '<span class="entry-choice">选择</span>';
+  return `<button class="event-row${picked ? ' selected' : ''}" data-event="${item.id}" aria-pressed="${picked}"><span class="entry-radio" aria-hidden="true"></span><span class="event-copy"><b>${escapeHTML(shortEventTitle(item))}</b><time>${displayDate(item.date)}</time></span>${mark}</button>`;
 }
 
 function eventsView(): string {
-  return shell(`<section class="events-content"><div class="page-heading"><button class="back-button" data-action="home">‹</button><div><p class="eyebrow">ENTRY DATE</p><h1>选择你的入坑时刻</h1></div></div><div class="focus-strip">${(Object.keys(focusLabels) as Focus[]).map(key => `<button class="${focus === key ? 'active' : ''}" data-focus="${key}">${focusLabels[key]}</button>`).join('')}</div>${entrySelector('events')}</section>`, 'events');
+  return shell(`<section class="events-content"><div class="page-heading"><button class="back-button" data-action="home" aria-label="返回">‹</button><div><h1>入坑日第 N 天</h1><p>从这一场，开始热爱</p></div></div><div class="focus-strip">${(Object.keys(focusLabels) as Focus[]).map(key => `<button class="${focus === key ? 'active' : ''}" data-focus="${key}">${focusLabels[key]}</button>`).join('')}</div>${entrySelector('events')}</section>`, 'events');
 }
 
 function cardFields(): string {
@@ -178,49 +174,55 @@ function cardFields(): string {
   return `<div class="card-fields">${name}<label>地区<input id="card-region" value="${escapeHTML(userRegion)}" maxlength="16" placeholder="例如：广东 广州"></label>${date}${days}</div>`;
 }
 
+function shareTabIcon(id: TemplateId): string {
+  if (id === 'ticket') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8.2A2.2 2.2 0 0 1 7.2 6h9.6A2.2 2.2 0 0 1 19 8.2v1.6a1.6 1.6 0 0 0 0 3.2v1.8A2.2 2.2 0 0 1 16.8 17H7.2A2.2 2.2 0 0 1 5 14.8v-1.8a1.6 1.6 0 0 0 0-3.2V8.2Z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M9 10h6M9 13h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+  if (id === 'badge') return '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="12" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="10" r="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 16h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+  return '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="7" width="17" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 12h.01M12 12h.01M16 12h.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
+}
+
 function resultView(): string {
   if (!result) return homeView();
   activeTemplate();
-  const tabs = SHARE_TEMPLATES.map(id => `<button class="${template === id ? 'active' : ''}" data-template="${id}">${TEMPLATE_LABELS[id]}</button>`).join('');
-  const actions = `<div class="result-actions"><button class="result-action-button" data-action="save">${actionIcon('save')}<span>保存到相册</span></button><button class="result-action-button" data-action="share">${actionIcon('share')}<span>发布图文</span></button><button class="result-action-button" data-action="comment">${actionIcon('comment')}<span>带图评论</span></button></div>`;
-  return shell(`<section class="result-content"><div class="result-heading"><button class="back-button" data-action="home" aria-label="返回">‹</button><h1>入坑日分享图</h1><button class="text-button" data-action="home">重新选择</button></div><div class="card-stage">${cardPreview(result)}</div>${cardFields()}<div class="template-tabs">${tabs}</div>${actions}<p class="data-note">统计按${PRODUCT_NAME}收录的重大事件计算 · 数据截至 ${EVENT_DATA.data_as_of}</p></section>`, 'home');
+  const tabs = `<div class="share-tabs">${SHARE_TEMPLATES.map(id => `<button class="share-tab${template === id ? ' on' : ''}" data-template="${id}">${shareTabIcon(id)}<span>${TEMPLATE_LABELS[id]}</span></button>`).join('')}</div>`;
+  const actions = `<div class="share-actions"><button data-action="save"><img src="./artwork/paper/action-save.png" alt="保存到相册"></button><button data-action="share"><img src="./artwork/paper/action-share.png" alt="发布图文"></button><button data-action="comment"><img src="./artwork/paper/action-comment.png" alt="带图评论"></button></div>`;
+  return shell(`<section class="result-content"><div class="share-head"><img src="./artwork/paper/share-title.png" alt="入坑日分享图"><button class="share-back" data-action="home" aria-label="返回"></button></div>${tabs}<div class="card-stage">${cardPreview(result)}</div>${cardFields()}${actions}<p class="data-note">统计按${PRODUCT_NAME}收录的重大事件计算 · 数据截至 ${EVENT_DATA.data_as_of}</p></section>`, 'home', 'result');
 }
 
 function presetIntervalCard(preset: (typeof PRESET_INTERVALS)[number]): string {
   const left = EVENT_DATA.items.find(item => item.id === preset.a);
   const right = EVENT_DATA.items.find(item => item.id === preset.b);
   if (!left || !right) return '';
-  return `<article class="interval-card"><div class="interval-card-head"><span>日期看板</span><strong>${preset.label}</strong></div><p>${preset.note}</p><div class="interval-event"><span class="interval-event-label">起点事件</span><time>${displayDate(left.date)}</time><b>${escapeHTML(shortEventTitle(left))}</b></div><div class="interval-connector"><span></span><small>相隔</small><span></span></div><div class="interval-event"><span class="interval-event-label">终点事件</span><time>${displayDate(right.date)}</time><b>${escapeHTML(shortEventTitle(right))}</b></div></article>`;
+  return `<article class="interval-card"><div class="interval-card-head"><span>日期看板</span><strong>${preset.label}</strong></div><p>${preset.note}</p><div class="interval-event"><span class="interval-event-label">起点事件</span><time>${displayDate(left.date)}</time><b>${escapeHTML(shortEventTitle(left))}</b></div><div class="interval-event"><span class="interval-event-label">终点事件</span><time>${displayDate(right.date)}</time><b>${escapeHTML(shortEventTitle(right))}</b></div></article>`;
 }
 
 function intervalBoard(): string {
   return `<section class="interval-board"><div class="section-heading"><h2>日期间隔看板</h2><span>提前发现有趣的数字</span></div><div class="interval-grid">${PRESET_INTERVALS.map(presetIntervalCard).join('')}</div></section>`;
 }
 
+function relationEndpoint(side: 'start' | 'end', options: string): string {
+  const kind = side === 'start' ? relationStartKind : relationEndKind;
+  const eventLabel = side === 'start' ? '起点事件' : '终点事件';
+  const dateLabel = side === 'start' ? '起点时间' : '终点时间';
+  const control = kind === 'event'
+    ? `<select id="relation-${side === 'start' ? 'a' : 'b'}">${options}</select>`
+    : `<input id="relation-date-${side === 'start' ? 'a' : 'b'}" type="date" value="${side === 'start' ? relationDateA : relationDateB}" max="${today}">`;
+  return `<div class="relation-field"><div class="relation-kind"><button class="${kind === 'event' ? 'on' : ''}" data-relation-side="${side}" data-relation-kind="event">${eventLabel}</button><button class="${kind === 'date' ? 'on' : ''}" data-relation-side="${side}" data-relation-kind="date">${dateLabel}</button></div>${control}</div>`;
+}
+
 function relationsView(): string {
-  const startValue = betweenMode === 'events' ? relationA.date : relationDateA;
-  const endValue = betweenMode === 'events' ? relationB.date : relationDateB;
+  const startValue = relationStartKind === 'event' ? relationA.date : relationDateA;
+  const endValue = relationEndKind === 'event' ? relationB.date : relationDateB;
   const difference = dateDifference(startValue, endValue);
   const special = difference === null ? [] : SPECIAL_NUMBERS.filter(number => number === difference);
   const options = EVENT_DATA.items.filter(item => item.selectable && item.date.length === 10).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 120);
-  const optionHTML = (value: EventItem) => `<option value="${value.id}">${displayDate(value.date)} · ${escapeHTML(shortEventTitle(value))}</option>`;
-  const relationTabs = `<div class="relation-tabs"><button class="${mode === 'between' ? 'active' : ''}" data-relmode="between">事件之间</button><button class="${mode === 'target' ? 'active' : ''}" data-relmode="target">指定日期</button><button class="${mode === 'special' ? 'active' : ''}" data-relmode="special">日期探秘</button></div>`;
-  if (mode === 'target') {
-    const targetDifference = dateDifference(relationA.date, targetDate);
-    const targetSpecial = targetDifference === null ? [] : SPECIAL_NUMBERS.filter(number => number === targetDifference);
-    return shell(`<section class="relations-content"><div class="page-heading"><div><p class="eyebrow">DATE RELATION</p><h1>指定日期</h1></div></div><p class="page-lead">看看一个事件距离指定日期是多少天。</p>${relationTabs}<div class="relation-form"><label>事件<select id="relation-a">${options.map(optionHTML).join('')}</select></label><label>指定日期<input id="target-date" type="date" value="${targetDate}" max="${today}"></label></div><div class="relation-result"><span>从事件到指定日期</span><strong>${targetDifference === null ? '—' : targetDifference}</strong><b>天</b>${targetSpecial.length ? `<p>命中特殊数字：${targetSpecial.join(' / ')}</p>` : '<p>可以试试 0511、1104 或 511 天。</p>'}</div><button class="primary-button" data-action="events">去事件库选择日期 <span>→</span></button>${intervalBoard()}</section>`, 'relations');
-  }
-  const heading = mode === 'special' ? '日期探秘' : '两个事件之间';
-  const lead = mode === 'special' ? '看看两个重要瞬间之间，是否藏着特殊数字。' : '把两个重要瞬间放在一起，看看它们相隔多少天。';
-  const betweenSource = `<div class="between-source"><button class="${betweenMode === 'events' ? 'active' : ''}" data-between-source="events">选择事件</button><button class="${betweenMode === 'dates' ? 'active' : ''}" data-between-source="dates">输入日期</button></div>`;
-  const form = betweenMode === 'events'
-    ? `<div class="relation-form"><label>起点事件<select id="relation-a">${options.map(optionHTML).join('')}</select></label><div class="relation-line">相隔</div><label>终点事件<select id="relation-b">${options.map(optionHTML).join('')}</select></label></div>`
-    : `<div class="relation-form date-form"><label>起始日期<input id="relation-date-a" type="date" value="${relationDateA}" max="${today}"></label><div class="relation-line">相隔</div><label>结束日期<input id="relation-date-b" type="date" value="${relationDateB}" max="${today}"></label></div>`;
-  return shell(`<section class="relations-content"><div class="page-heading"><div><p class="eyebrow">DATE RELATION</p><h1>${heading}</h1></div></div><p class="page-lead">${lead}</p>${relationTabs}${betweenSource}${form}<div class="relation-result"><span>${betweenMode === 'events' ? '两个事件之间' : '两个日期之间'}</span><strong>${difference === null ? '—' : difference}</strong><b>天</b>${special.length ? `<p>命中特殊数字：${special.join(' / ')}</p>` : '<p>还没有命中特殊数字，换一组事件试试。</p>'}</div><button class="primary-button" data-action="events">去事件库选择日期 <span>→</span></button>${intervalBoard()}</section>`, 'relations');
+  const optionHTML = options.map(value => `<option value="${value.id}">${displayDate(value.date)} · ${escapeHTML(shortEventTitle(value))}</option>`).join('');
+  const form = `<div class="relation-form">${relationEndpoint('start', optionHTML)}${relationEndpoint('end', optionHTML)}</div>`;
+  const hit = special.length ? `<p>命中特殊数字：${special.join(' / ')}</p>` : '';
+  return shell(`<section class="relations-content"><div class="page-heading"><div><h1>日期间隔</h1></div></div><p class="page-lead">把两个重要瞬间放在一起，看看它们相隔多少天。</p>${form}<div class="relation-result"><span>相差</span><strong>${difference === null ? '—' : difference}</strong><b>天</b>${hit}</div><button class="primary-button" data-action="events">去事件库选择日期</button>${intervalBoard()}</section>`, 'relations');
 }
 
 function aboutView(): string {
-  return shell(`<section class="about-content"><div class="page-heading"><div><p class="eyebrow">ABOUT THE CALENDAR</p><h1>关于${PRODUCT_NAME}</h1></div></div><div class="about-block"><h2>记录日期，不定义喜欢。</h2><p>${PRODUCT_NAME}把赛事、入坑日和球迷自己的重要日期放在一起，帮你看见时间之间的距离。</p></div><div class="about-block"><h2>统计口径</h2><p>冠军和事件统计来自本工具收录的数据，不代表完整官方生涯统计。日期统一按北京时间自然日处理。</p></div><div class="about-block"><h2>数据截至</h2><p>${EVENT_DATA.data_as_of} · 事件库 ${EVENT_DATA.count} 条</p></div><button class="primary-button" data-action="home">回到首页 <span>→</span></button></section>`, 'about');
+  return shell(`<section class="about-content"><div class="page-heading"><div><h1>关于${PRODUCT_NAME}</h1></div></div><div class="about-block"><h2>记录日期，不定义喜欢。</h2><p>${PRODUCT_NAME}把赛事、入坑日和球迷自己的重要日期放在一起，帮你看见时间之间的距离。</p></div><div class="about-block"><h2>统计口径</h2><p>冠军和事件统计来自本工具收录的数据，不代表完整官方生涯统计。日期统一按北京时间自然日处理。</p></div><div class="about-block"><h2>数据截至</h2><p>${EVENT_DATA.data_as_of} · 事件库 ${EVENT_DATA.count} 条</p></div><button class="primary-button" data-action="home">回到首页</button></section>`, 'about');
 }
 
 function render(): void {
@@ -297,7 +299,12 @@ function bindEvents(): void {
   app.querySelectorAll<HTMLButtonElement>('[data-year]').forEach(button => button.addEventListener('click', () => { year = button.dataset.year || 'all'; render(); }));
   app.querySelectorAll<HTMLButtonElement>('[data-type]').forEach(button => button.addEventListener('click', () => { type = button.dataset.type || 'all'; render(); }));
   app.querySelectorAll<HTMLButtonElement>('[data-template]').forEach(button => button.addEventListener('click', () => { template = button.dataset.template as TemplateId; saveCurrent(); render(); }));
-  app.querySelectorAll<HTMLButtonElement>('[data-relmode]').forEach(button => button.addEventListener('click', () => { mode = button.dataset.relmode as Mode; render(); }));
+  app.querySelectorAll<HTMLButtonElement>('[data-relation-kind]').forEach(button => button.addEventListener('click', () => {
+    const kind = button.dataset.relationKind === 'date' ? 'date' : 'event';
+    if (button.dataset.relationSide === 'start') relationStartKind = kind;
+    else relationEndKind = kind;
+    render();
+  }));
   app.querySelectorAll<HTMLButtonElement>('[data-entry-method]').forEach(button => button.addEventListener('click', () => { entryMethod = button.dataset.entryMethod as 'event' | 'date'; render(); }));
   app.querySelectorAll<HTMLInputElement>('#event-search, #home-event-search').forEach(search => search.addEventListener('input', () => {
     query = search.value;
@@ -308,10 +315,8 @@ function bindEvents(): void {
       if (nextSearch) { nextSearch.focus(); nextSearch.setSelectionRange(nextSearch.value.length, nextSearch.value.length); }
     });
   }));
-  app.querySelectorAll<HTMLButtonElement>('[data-between-source]').forEach(button => button.addEventListener('click', () => { betweenMode = button.dataset.betweenSource as 'events' | 'dates'; render(); }));
   const relationASelect = app.querySelector<HTMLSelectElement>('#relation-a'); if (relationASelect) { if (relationA) relationASelect.value = relationA.id; relationASelect.addEventListener('change', () => { relationA = EVENT_DATA.items.find(item => item.id === relationASelect.value) || relationA; render(); }); }
   const relationBSelect = app.querySelector<HTMLSelectElement>('#relation-b'); if (relationBSelect) { if (relationB) relationBSelect.value = relationB.id; relationBSelect.addEventListener('change', () => { relationB = EVENT_DATA.items.find(item => item.id === relationBSelect.value) || relationB; render(); }); }
-  const targetInput = app.querySelector<HTMLInputElement>('#target-date'); if (targetInput) targetInput.addEventListener('change', () => { targetDate = targetInput.value || today; render(); });
   const relationDateAInput = app.querySelector<HTMLInputElement>('#relation-date-a'); if (relationDateAInput) relationDateAInput.addEventListener('change', () => { relationDateA = relationDateAInput.value || relationDateA; render(); });
   const relationDateBInput = app.querySelector<HTMLInputElement>('#relation-date-b'); if (relationDateBInput) relationDateBInput.addEventListener('change', () => { relationDateB = relationDateBInput.value || relationDateB; render(); });
   const customDateInput = app.querySelector<HTMLInputElement>('#custom-date'); if (customDateInput) customDateInput.addEventListener('change', () => { customDate = customDateInput.value || customDate; refreshGenerateReady(); });
