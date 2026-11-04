@@ -191,7 +191,7 @@ function methodTabs(): string {
 }
 
 function homeView(): string {
-  const hits = `<div class="poster"><img class="poster-art" src="./artwork/paper/home-top.png" alt="入坑日第 N 天，从这一场，开始热爱"></div>`;
+  const hits = `<div class="poster"><img class="poster-art" src="./artwork/paper/home-top.png" alt="入坑日·第 N 天，从这一场，开始热爱"></div>`;
   return shell(`<section class="home-content poster-page">${hits}<div class="poster-body">${focusPicks()}${methodTabs()}${entrySelector('home', true)}</div></section>`, 'home');
 }
 

@@ -5,7 +5,7 @@ export type Mode = 'entry' | 'between' | 'target' | 'special';
 export type TemplateId = 'birthday' | 'ticket' | 'scoreboard' | 'badge' | 'table';
 export type EventItem = (typeof EVENT_DATA.items)[number];
 
-export const PRODUCT_NAME = '入坑日第 N 天';
+export const PRODUCT_NAME = '入坑日·第 N 天';
 
 export const focusLabels: Record<Focus, string> = {
   'sun-yingsha': '孙颖莎',
