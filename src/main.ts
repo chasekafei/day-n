@@ -299,8 +299,29 @@ async function doSave(): Promise<void> {
   try { await saveImage(await buildExport()); toast(isNative() ? '已保存到相册' : '图片已开始下载'); } catch (error) { toast(error instanceof Error ? error.message : '保存失败，请稍后重试'); }
 }
 
+function likedName(): string {
+  if (!result) return focusLabels.shatou;
+  if (result.focus === 'custom' && result.nickname.trim()) return result.nickname.trim();
+  return focusLabels[result.focus];
+}
+
+function shareText(): { title: string; content: string; comment: string } {
+  const name = likedName();
+  const days = result?.days || 1;
+  const prefix = '今天是我喜欢';
+  const suffix = `的第 ${days} 天`;
+  const room = 20 - Array.from(prefix + suffix).length;
+  const titleName = Array.from(name).slice(0, Math.max(0, room)).join('');
+  const line = `今天是我喜欢${name}的第 ${days} 天`;
+  return {
+    title: `${prefix}${titleName}${suffix}`,
+    content: `你们都喜欢${name}多久了？点开小工具，领取一张入坑纪念卡吧！`,
+    comment: `${line}。`,
+  };
+}
+
 async function doShare(kind: 'note' | 'comment'): Promise<void> {
-  try { await shareImage(await buildExport(), kind, result ? { d: result.startDate, n: result.days, f: result.focus, t: template } : undefined); toast(kind === 'comment' ? '已打开评论编辑器' : '已打开发布页'); } catch (error) { toast(error instanceof Error ? error.message : '分享失败，请先保存图片'); }
+  try { await shareImage(await buildExport(), kind, result ? { d: result.startDate, n: result.days, f: result.focus, t: template } : undefined, shareText()); toast(kind === 'comment' ? '已打开评论编辑器' : '已打开发布页'); } catch (error) { toast(error instanceof Error ? error.message : '分享失败，请先保存图片'); }
 }
 
 function bindEvents(): void {

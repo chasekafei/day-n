@@ -287,7 +287,9 @@ export async function saveImage(dataUrl: string): Promise<void> {
   throw new NativeUnavailableError();
 }
 
-export async function shareImage(dataUrl: string, kind: 'comment' | 'note', snapshot?: unknown): Promise<void> {
+export type ShareText = { title: string; content: string; comment: string };
+
+export async function shareImage(dataUrl: string, kind: 'comment' | 'note', snapshot?: unknown, text?: ShareText): Promise<void> {
   requireImage(dataUrl);
   if (!isNative()) throw new NativeUnavailableError('评论与笔记分享需要在小红书中使用；浏览器预览可先保存图片。');
   const api = kind === 'comment' ? 'interactionOpenApi' : 'postNote';
@@ -298,7 +300,7 @@ export async function shareImage(dataUrl: string, kind: 'comment' | 'note', snap
   if (kind === 'comment') {
     const payload: NativeResult = {
       action: 'post_comment',
-      content: '我准备举这个牌',
+      content: text?.comment || '今天是我喜欢莎头的第 1 天。',
     };
     if (typeof snapshot !== 'undefined') {
       const serialized = JSON.stringify(snapshot);
@@ -316,8 +318,8 @@ export async function shareImage(dataUrl: string, kind: 'comment' | 'note', snap
   const filePath = await imagePath(dataUrl, false);
   const version = await clientVersion();
   await invoke('postNote', {
-    title: '入坑日第 N 天｜记录重要日期',
-    content: '用入坑日第 N 天记录自己的入坑日、赛事纪念日和两个事件之间的日期关系。可以生成日期卡，保存到相册、晒到评论或发布成笔记。发布前请检查图片、正文和是否挂载小工具。',
+    title: text?.title || '今天是我喜欢莎头的第 1 天',
+    content: text?.content || '你们都喜欢莎头多久了？点开小工具，领取一张入坑纪念卡吧！',
     ...(version >= 9430 ? { pageType: 'photo_publish' } : {}),
     mediaInfo: { image_resources: [{ url: filePath }] },
   }, 180_000);
