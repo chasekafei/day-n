@@ -39,7 +39,15 @@ html, body, #app {
   padding: 0 0 calc(78px + min(460px, 74vw) * 134 / 422 + 48px);
   background: #fceaf6;
 }
-.page-result.app-shell { padding: 0 0 140px; }
+.page-result.app-shell {
+  padding: 0 0 140px;
+  padding-top: calc(10px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px)));
+}
+.page-relations.app-shell,
+.page-events.app-shell,
+.page-about.app-shell {
+  padding-top: max(24px, calc(10px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px))));
+}
 .page-home .home-content { padding-top: 0; margin-top: 0; }
 .page-home .topbar,
 .page-result .topbar {
@@ -64,6 +72,9 @@ html, body, #app {
   clip-path: none;
   background: rgba(255, 253, 251, .9);
   box-shadow: 0 4px 12px rgba(80, 40, 80, .12);
+}
+.page-result .icon-button {
+  top: calc(24px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px)));
 }
 
 .hero-poster { position: relative; min-height: 196px; margin: 6px 0 8px; padding: 18px 0 8px; }
@@ -188,8 +199,14 @@ html, body, #app {
   border-radius: 16px;
   box-shadow: 0 8px 18px rgba(214, 120, 170, .08);
   color: var(--ink);
+  font-size: 16px;
   font-weight: 700;
   line-height: 52px;
+}
+input,
+select,
+textarea {
+  font-size: 16px;
 }
 .relation-form input[type="date"] {
   appearance: none;

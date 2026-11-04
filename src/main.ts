@@ -3,8 +3,8 @@ import './paper.css';
 import { EVENT_DATA } from './data.ts';
 import { dateDifference, displayDate, eventsForFocus, focusLabels, PRODUCT_NAME, statsSince, titleForDays, todayString, typesForFocus, yearsForFocus, daysSince, shortEventTitle, type Focus, type TemplateId, type EventItem } from './domain.ts';
 import { renderCard, type CardResult } from './card-renderer.ts';
-import { writeRecord, type CalendarRecord } from './records.ts';
-import { saveImage, shareImage, isNative } from './platform.ts';
+import { readRecord, writeRecord, type CalendarRecord } from './records.ts';
+import { loadLocal, saveImage, saveLocal, shareImage, isNative } from './platform.ts';
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
 const today = todayString();
@@ -18,7 +18,9 @@ let year = 'all';
 let type = 'all';
 let customDate = today;
 let customPerson = '';
+const NAME_KEY = 'day-n.name';
 let userNickname = '';
+let nameEdited = false;
 let userRegion = '';
 let entryMethod: 'event' | 'date' = 'event';
 let relationA: EventItem = EVENT_DATA.items.find(item => item.date === '2024-07-30') || EVENT_DATA.items[0];
@@ -42,6 +44,40 @@ const PRESET_INTERVALS = [
 const SPECIAL_NUMBERS = [114, 365, 511, 1000, 1104, 2000, 3650, 5114];
 
 const escapeHTML = (value: string): string => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char] || char));
+
+function storedName(value: unknown): string {
+  const raw = typeof value === 'string'
+    ? value
+    : value && typeof value === 'object' && typeof (value as { name?: unknown }).name === 'string'
+      ? (value as { name: string }).name
+      : '';
+  return raw.trim().slice(0, 16);
+}
+
+function rememberName(raw: string): void {
+  nameEdited = true;
+  userNickname = raw.trim().slice(0, 16);
+  if (result) result.profileNickname = userNickname;
+  void saveLocal(NAME_KEY, { name: userNickname }).catch(() => {});
+}
+
+async function restoreName(): Promise<void> {
+  let cached: unknown = null;
+  let hasCache = false;
+  try {
+    cached = await loadLocal(NAME_KEY);
+    hasCache = cached !== null && typeof cached !== 'undefined';
+  } catch { /* 读取失败时再看旧记录 */ }
+  const name = hasCache ? storedName(cached) : storedName(readRecord()?.profileNickname);
+  if (!hasCache && name) void saveLocal(NAME_KEY, { name }).catch(() => {});
+  if (nameEdited || !name) return;
+  userNickname = name;
+  if (result) result.profileNickname = userNickname;
+  const input = app.querySelector<HTMLInputElement>('#card-nickname');
+  if (!input || input.value === userNickname) return;
+  input.value = userNickname;
+  syncCard();
+}
 
 function toast(message: string): void {
   const element = document.querySelector<HTMLDivElement>('#toast');
@@ -161,7 +197,7 @@ function eventRow(item: EventItem): string {
 }
 
 function eventsView(): string {
-  return shell(`<section class="events-content"><div class="page-heading"><button class="back-button" data-action="home" aria-label="返回">‹</button><div><h1>入坑日第 N 天</h1><p>从这一场，开始热爱</p></div></div><div class="focus-strip">${(Object.keys(focusLabels) as Focus[]).map(key => `<button class="${focus === key ? 'active' : ''}" data-focus="${key}">${focusLabels[key]}</button>`).join('')}</div>${entrySelector('events')}</section>`, 'events');
+  return shell(`<section class="events-content"><div class="focus-strip">${(Object.keys(focusLabels) as Focus[]).map(key => `<button class="${focus === key ? 'active' : ''}" data-focus="${key}">${focusLabels[key]}</button>`).join('')}</div>${entrySelector('events')}</section>`, 'events');
 }
 
 function cardFields(): string {
@@ -293,7 +329,7 @@ function bindEvents(): void {
     else if (action === 'share') void doShare('note');
     else if (action === 'comment') void doShare('comment');
   }));
-  app.querySelectorAll<HTMLButtonElement>('[data-focus]').forEach(button => button.addEventListener('click', () => { focus = button.dataset.focus as Focus; query = ''; year = 'all'; type = 'all'; selected = null; entryMethod = 'event'; customPerson = ''; userNickname = ''; render(); }));
+  app.querySelectorAll<HTMLButtonElement>('[data-focus]').forEach(button => button.addEventListener('click', () => { focus = button.dataset.focus as Focus; query = ''; year = 'all'; type = 'all'; selected = null; entryMethod = 'event'; customPerson = ''; render(); }));
   app.querySelectorAll<HTMLButtonElement>('[data-event]').forEach(button => button.addEventListener('click', () => { const item = EVENT_DATA.items.find(value => value.id === button.dataset.event); if (item) { selected = item; customDate = item.date; entryMethod = 'event'; render(); } }));
   app.querySelectorAll<HTMLButtonElement>('[data-year]').forEach(button => button.addEventListener('click', () => { year = button.dataset.year || 'all'; render(); }));
   app.querySelectorAll<HTMLButtonElement>('[data-type]').forEach(button => button.addEventListener('click', () => { type = button.dataset.type || 'all'; render(); }));
@@ -321,7 +357,7 @@ function bindEvents(): void {
   const customDateInput = app.querySelector<HTMLInputElement>('#custom-date'); if (customDateInput) customDateInput.addEventListener('change', () => { customDate = customDateInput.value || customDate; refreshGenerateReady(); });
   const customPersonInput = app.querySelector<HTMLInputElement>('#custom-person'); if (customPersonInput) customPersonInput.addEventListener('input', () => { customPerson = customPersonInput.value; refreshGenerateReady(); });
   const manualDateInput = app.querySelector<HTMLInputElement>('#manual-date'); if (manualDateInput) manualDateInput.addEventListener('change', () => { customDate = manualDateInput.value || customDate; refreshGenerateReady(); });
-  const cardNicknameInput = app.querySelector<HTMLInputElement>('#card-nickname'); if (cardNicknameInput) cardNicknameInput.addEventListener('input', () => { userNickname = cardNicknameInput.value.trim(); if (result) result.profileNickname = userNickname; syncCard(); });
+  const cardNicknameInput = app.querySelector<HTMLInputElement>('#card-nickname'); if (cardNicknameInput) cardNicknameInput.addEventListener('input', () => { rememberName(cardNicknameInput.value); syncCard(); });
   const cardRegionInput = app.querySelector<HTMLInputElement>('#card-region'); if (cardRegionInput) cardRegionInput.addEventListener('input', () => { userRegion = cardRegionInput.value.trim(); if (result) result.region = userRegion; syncCard(); });
   const cardDateInput = app.querySelector<HTMLInputElement>('#card-date'); if (cardDateInput) cardDateInput.addEventListener('change', () => {
     const value = cardDateInput.value;
@@ -343,3 +379,4 @@ function bindEvents(): void {
 }
 
 render();
+void restoreName();
