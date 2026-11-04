@@ -23,7 +23,7 @@ export async function auditOfficialArtifact(target) {
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
-  for (const target of process.argv.slice(2).length ? process.argv.slice(2) : ['dist', 'release/table-tennis-calendar.zip']) {
+  for (const target of process.argv.slice(2).length ? process.argv.slice(2) : ['dist', 'release/day-n.zip']) {
     await auditOfficialArtifact(target);
   }
 }

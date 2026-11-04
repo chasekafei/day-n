@@ -238,7 +238,7 @@ html, body, #app {
   content: "";
   position: absolute;
   inset: -4px -16px -4px -8px;
-  background: url('./artwork/paper/strip-b.png') center / 100% 100% no-repeat;
+  background: url('../artwork/paper/strip-b.png') center / 100% 100% no-repeat;
   pointer-events: none;
 }
 .event-row.selected {
@@ -457,25 +457,25 @@ html, body, #app {
   right: 0;
   bottom: 0;
   height: 100%;
-  background: url('./artwork/paper/chip-off.png') center / 100% 100% no-repeat;
+  background: url('../artwork/paper/chip-off.png') center / 100% 100% no-repeat;
   pointer-events: none;
 }
 .focus-pick.on { padding-right: 18px; }
 .focus-pick.on::before {
-  background-image: url('./artwork/paper/chip-on.png');
+  background-image: url('../artwork/paper/chip-on.png');
   height: 122.6%;
 }
 .method-tabs { display: grid; grid-template-columns: 1.15fr .85fr; gap: 10px; margin: 0 0 12px; }
 .method-tab {
   min-height: 46px;
   padding: 8px 8px 12px;
-  background: url('./artwork/paper/tab-off.png') center / 100% 100% no-repeat;
+  background: url('../artwork/paper/tab-off.png') center / 100% 100% no-repeat;
   color: #8d7b92;
   font-weight: 800;
   font-size: 13px;
 }
 .method-tab.on {
-  background-image: url('./artwork/paper/tab-on.png');
+  background-image: url('../artwork/paper/tab-on.png');
   color: #fff;
 }
 .share-head { position: relative; }
@@ -488,13 +488,13 @@ html, body, #app {
   gap: 6px;
   min-height: 58px;
   padding: 8px 4px 14px;
-  background: url('./artwork/paper/share-tab-off.png') center / 100% 100% no-repeat;
+  background: url('../artwork/paper/share-tab-off.png') center / 100% 100% no-repeat;
   color: var(--ink);
   font-weight: 800;
 }
 .share-tab svg { width: 18px; height: 18px; flex: none; }
 .share-tab.on {
-  background-image: url('./artwork/paper/share-tab-on.png');
+  background-image: url('../artwork/paper/share-tab-on.png');
   color: #fff;
 }
 .poster-page .entry-generate-wrap {
@@ -516,7 +516,7 @@ html, body, #app {
   padding: 0;
   aspect-ratio: 422 / 134;
   border-radius: 0;
-  background: url('./artwork/paper/list-generate.png') center / 100% 100% no-repeat;
+  background: url('../artwork/paper/list-generate.png') center / 100% 100% no-repeat;
   color: transparent;
   clip-path: none;
   box-shadow: none;

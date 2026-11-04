@@ -8,7 +8,7 @@ const dist = resolve('dist');
 await verifyDirectory(dist);
 await auditOfficialArtifact(dist);
 await mkdir('release', { recursive: true });
-const archive = resolve('release/table-tennis-calendar.zip');
+const archive = resolve('release/day-n.zip');
 await rm(archive, { force: true });
 execFileSync('zip', ['-q', '-r', '-X', archive, '.'], { cwd: dist });
 const entries = execFileSync('unzip', ['-Z1', archive], { encoding: 'utf8' }).trim().split('\n');
@@ -20,6 +20,6 @@ if (entries.some((entry) => entry.startsWith('/') || entry.split('/').includes('
 }
 execFileSync('unzip', ['-tq', archive], { stdio: 'pipe' });
 const bytes = (await stat(archive)).size;
-if (bytes >= MAX_PACKAGE_BYTES) throw new Error('ZIP 超过项目 3 MiB 预算');
+if (bytes >= MAX_PACKAGE_BYTES) throw new Error('ZIP 超过 10 MiB 上传上限');
 await auditOfficialArtifact(archive);
 console.log(`发布包：${archive}（${(bytes / 1024).toFixed(1)} KB）`);
