@@ -7,6 +7,8 @@ import { readRecord, writeRecord, type CalendarRecord } from './records.ts';
 import { loadLocal, saveImage, saveLocal, shareImage, isNative } from './platform.ts';
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
+// 事件库还有细节要改，先从导航里拿掉。改回 true 即可重新放出。
+const SHOW_EVENTS_LIBRARY = false;
 const today = todayString();
 let view: 'home' | 'events' | 'result' | 'relations' | 'about' = 'home';
 let focus: Focus = 'sun-yingsha';
@@ -175,7 +177,8 @@ function cardPreview(card: CardResult): string {
 
 function shell(content: string, active: string, page = active): string {
   const help = page === 'home' ? '<button class="icon-button" data-action="about" aria-label="打开说明">?</button>' : '';
-  return `<main class="app-shell page-${page}"><header class="topbar"><button class="brand-button" data-action="home"><span class="brand-mark">日</span><span><b>${PRODUCT_NAME}</b><small>从这一场，开始热爱</small></span></button>${help}</header>${content}<nav class="bottom-nav"><button class="${active === 'home' ? 'active' : ''}" data-action="home"><span>⌂</span>首页</button><button class="${active === 'relations' ? 'active' : ''}" data-action="relations"><span>⌁</span>日期间隔</button><button class="${active === 'events' ? 'active' : ''}" data-action="events"><span>▤</span>事件库</button></nav></main>`;
+  const eventsTab = SHOW_EVENTS_LIBRARY ? `<button class="${active === 'events' ? 'active' : ''}" data-action="events"><span>▤</span>事件库</button>` : '';
+  return `<main class="app-shell page-${page}"><header class="topbar"><button class="brand-button" data-action="home"><span class="brand-mark">日</span><span><b>${PRODUCT_NAME}</b><small>从这一场，开始热爱</small></span></button>${help}</header>${content}<nav class="bottom-nav${SHOW_EVENTS_LIBRARY ? '' : ' two'}"><button class="${active === 'home' ? 'active' : ''}" data-action="home"><span>⌂</span>首页</button><button class="${active === 'relations' ? 'active' : ''}" data-action="relations"><span>⌁</span>日期间隔</button>${eventsTab}</nav></main>`;
 }
 
 function focusPicks(): string {
@@ -257,7 +260,7 @@ function relationsView(): string {
   const optionHTML = options.map(value => `<option value="${value.id}">${displayDate(value.date)} · ${escapeHTML(shortEventTitle(value))}</option>`).join('');
   const form = `<div class="relation-form">${relationEndpoint('start', optionHTML)}${relationEndpoint('end', optionHTML)}</div>`;
   const hit = special.length ? `<p>命中特殊数字：${special.join(' / ')}</p>` : '';
-  return shell(`<section class="relations-content"><div class="page-heading"><div><h1>日期间隔</h1></div></div><p class="page-lead">把两个重要瞬间放在一起，看看它们相隔多少天。</p>${form}<div class="relation-result"><span>相差</span><strong>${difference === null ? '—' : difference}</strong><b>天</b>${hit}</div><button class="primary-button" data-action="events">去事件库选择日期</button>${intervalBoard()}</section>`, 'relations');
+  return shell(`<section class="relations-content"><div class="page-heading"><div><h1>日期间隔</h1></div></div><p class="page-lead">把两个重要瞬间放在一起，看看它们相隔多少天。</p>${form}<div class="relation-result"><span>相差</span><strong>${difference === null ? '—' : difference}</strong><b>天</b>${hit}</div>${SHOW_EVENTS_LIBRARY ? '<button class="primary-button" data-action="events">去事件库选择日期</button>' : ''}${intervalBoard()}</section>`, 'relations');
 }
 
 function aboutView(): string {
@@ -265,6 +268,7 @@ function aboutView(): string {
 }
 
 function render(): void {
+  if (view === 'events' && !SHOW_EVENTS_LIBRARY) view = 'home';
   app.innerHTML = view === 'home' ? homeView() : view === 'events' ? eventsView() : view === 'result' ? resultView() : view === 'relations' ? relationsView() : aboutView();
   bindEvents();
   void paintShareCard();
@@ -330,7 +334,7 @@ function bindEvents(): void {
   app.querySelectorAll<HTMLElement>('[data-action]').forEach(element => element.addEventListener('click', () => {
     const action = element.dataset.action;
     if (action === 'home') { view = 'home'; render(); }
-    else if (action === 'events') { view = 'events'; render(); }
+    else if (action === 'events' && SHOW_EVENTS_LIBRARY) { view = 'events'; render(); }
     else if (action === 'relations') { view = 'relations'; render(); }
     else if (action === 'about') { view = 'about'; render(); }
     else if (action === 'generate-entry') {

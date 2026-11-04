@@ -329,6 +329,7 @@ textarea {
   box-shadow: 0 -8px 24px rgba(214, 120, 170, .12);
 }
 .bottom-nav button.active { color: var(--red); }
+.bottom-nav.two { grid-template-columns: repeat(2, 1fr); }
 
 .page-heading,
 .result-heading { padding: 18px 0 12px; }
