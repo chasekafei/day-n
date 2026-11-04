@@ -35,7 +35,7 @@ let relationDateB: string = relationB.date;
 const PRESET_INTERVALS = [
   { a: 'A096', b: 'A168', label: '114 天', note: '从澳门世界杯，到巴黎复盘' },
   { a: 'A075', b: 'A084', label: '511 天', note: '从休斯敦，到澳门冠军赛' },
-  { a: 'A070', b: 'A081', label: '1104 天', note: '两个冠军日之间的日期巧合' },
+  { a: 'A077', b: 'A042', label: '1104 天', note: '从休斯敦女双卫冕，到成都混团卫冕' },
   { a: 'A019', b: 'A042', label: '1105 天', note: '从第一个世界冠军，到成都卫冕' },
   { a: 'A079', b: 'A082', label: '5 个月 11 天', note: '团体冠军，到新加坡女单冠军' },
   { a: 'A032', b: 'A096', label: '4 个月 11 天', note: '混团世界杯，到澳门世界杯' },

@@ -89,14 +89,14 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2017-12-01",
+      "date": "2017-12-03",
       "event": "世青赛（意大利）青年女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": false,
-      "source": "Wikipedia Sun Yingsha 奖牌表 / ITTF WJTTC 2017",
-      "confidence": "中",
-      "note": "世青赛日期区间内；精确决赛日待 ITTF 公报再核，暂取 12/1 附近，置信中",
+      "source": "ITTF 2017-12-03",
+      "confidence": "高",
+      "note": "青年女单决赛当地日 12/3",
       "id": "A063",
       "selectable": true
     },
@@ -125,14 +125,14 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2018-08-26",
+      "date": "2018-08-28",
       "event": "雅加达亚运会女团金牌（孙颖莎出场）",
       "type": "团体·冠军",
       "who": "孙颖莎",
       "is_title": true,
-      "source": "北京市体育局亚运成绩表 / 中国奥委会相关报道",
-      "confidence": "中",
-      "note": "女团决赛区间 8/26–30；精确决赛日待核，暂取开赛日区间代表日，置信中",
+      "source": "人民网 2018-08-28",
+      "confidence": "高",
+      "note": "女团决赛与男团同日 8/28，不是赛程起始日 8/26",
       "id": "A065",
       "selectable": true
     },
@@ -305,26 +305,26 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2019-10-13",
-      "event": "德国公开赛混双冠军（王楚钦/孙颖莎）",
+      "date": "2019-10-12",
+      "event": "德国公开赛混双冠军（许昕/孙颖莎，3:1 胜王楚钦/王曼昱）",
       "type": "混双·冠军",
-      "who": "双人",
+      "who": "孙颖莎",
       "is_title": true,
-      "source": "Wikipedia 混双时间线（德公开赛 W）",
-      "confidence": "中",
-      "note": "成绩时间线确认德公开赛混双夺冠；精确决赛日取赛事周末约 10/13，置信中",
+      "source": "国际乒联中文官网 2019-10-12",
+      "confidence": "高",
+      "note": "冠军是许昕/孙颖莎，不是莎头。王楚钦/王曼昱获亚军，所以不再记入双人",
       "id": "A072",
       "selectable": true
     },
     {
-      "date": "2019-10-15",
+      "date": "2019-10-13",
       "event": "德国公开赛女单冠军（4:1 伊藤美诚）",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
-      "source": "ITTF（Wikipedia 引 2019-10-15；德公开赛决赛日）",
+      "source": "ITTF 2019-10-13",
       "confidence": "高",
-      "note": "ITTF 德文/英文报道周；Wikipedia singles titles 表引 ITTF",
+      "note": "女单决赛 10/13",
       "id": "A070",
       "selectable": true
     },
@@ -425,14 +425,14 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2021-09-26",
+      "date": "2021-09-25",
       "event": "第十四届全运会女单银牌（决赛负王曼昱）",
       "type": "单打·奖牌",
       "who": "孙颖莎",
       "is_title": false,
-      "source": "澎湃 2021-09 全运会报道",
+      "source": "央视 2021-09-25",
       "confidence": "高",
-      "note": "",
+      "note": "与男双决赛同晚",
       "id": "A159",
       "selectable": true
     },
@@ -461,14 +461,14 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2021-11-29",
+      "date": "2021-11-30",
       "event": "休斯敦世乒赛女单银牌（2:4 王曼昱）",
       "type": "单打·奖牌",
       "who": "孙颖莎",
       "is_title": false,
       "source": "人民网 2021-11-30",
       "confidence": "高",
-      "note": "",
+      "note": "当地决赛 11/29，按北京时间记 11/30",
       "id": "A076",
       "selectable": true
     },
@@ -485,14 +485,14 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2021-12-01",
+      "date": "2021-12-07",
       "event": "WTT Cup Finals（新加坡）女单冠军（4:2 王艺迪）——WTT 年终赛首冠",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
-      "source": "WTT / Wikipedia singles titles",
-      "confidence": "中",
-      "note": "2021 WTT Cup Finals Singapore；精确决赛日待 WTT 页面再核，置信中",
+      "source": "WTT Cup Finals 新加坡 2021",
+      "confidence": "高",
+      "note": "女单决赛 12/7",
       "id": "A078",
       "selectable": true
     },
@@ -605,14 +605,14 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2023-04-09",
+      "date": "2023-04-15",
       "event": "WTT 冠军赛新乡站女单冠军（4:1 王艺迪）",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
-      "source": "WTT Champions Xinxiang 2023",
+      "source": "中新网 2023-04-15",
       "confidence": "高",
-      "note": "Wikipedia singles titles 引 WTT；决赛约 4/9",
+      "note": "女单决赛 4/15",
       "id": "A083",
       "selectable": true
     },
@@ -725,14 +725,14 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2023-09-27",
+      "date": "2023-09-26",
       "event": "杭州亚运会男团金牌（王楚钦出场）",
       "type": "团体·冠军",
       "who": "王楚钦",
       "is_title": true,
-      "source": "中新网杭州亚运收官报道",
-      "confidence": "中",
-      "note": "男团决赛日约 9/27，待亚运成绩公报再核，置信中",
+      "source": "中新网 2023-09-26",
+      "confidence": "高",
+      "note": "男团决赛与女团同日 9/26",
       "id": "A089",
       "selectable": true
     },
@@ -833,14 +833,14 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2024-02-11",
+      "date": "2024-01-13",
       "event": "WTT Star Contender 多哈女单冠军（4:1 陈梦）",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
-      "source": "WTT Star Contender Doha 2024",
-      "confidence": "中",
-      "note": "决赛约 2 月中，取 2/11，置信中",
+      "source": "人民网 2024-01-15",
+      "confidence": "高",
+      "note": "女单决赛 1/13",
       "id": "A150",
       "selectable": true
     },
@@ -857,14 +857,14 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2024-02-26",
+      "date": "2024-02-24",
       "event": "釜山世乒赛女团金牌（孙颖莎出场）",
       "type": "团体·冠军",
       "who": "孙颖莎",
       "is_title": true,
-      "source": "Wikipedia Sun Yingsha 奖牌表 World Championships 2024 Busan Team",
-      "confidence": "中",
-      "note": "女团决赛约 2/26，置信中",
+      "source": "中新网 2024-02-24",
+      "confidence": "高",
+      "note": "女团决赛 2/24，男团决赛 2/25",
       "id": "A093",
       "selectable": true
     },
@@ -905,14 +905,14 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2024-03-21",
+      "date": "2024-03-31",
       "event": "WTT 冠军赛仁川站女单冠军（4:0 王曼昱）",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
-      "source": "WTT Champions Incheon 2024 / Olympics.com",
+      "source": "Olympics.com 仁川冠军赛决赛综述",
       "confidence": "高",
-      "note": "",
+      "note": "女单决赛 3/31",
       "id": "A095",
       "selectable": true
     },
@@ -953,14 +953,14 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2024-05-27",
+      "date": "2024-06-03",
       "event": "WTT 冠军赛重庆站女单冠军（4:3 王曼昱）",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
-      "source": "WTT Champions Chongqing 2024",
+      "source": "中新网 2024-06-03",
       "confidence": "高",
-      "note": "",
+      "note": "女单决赛 6/3",
       "id": "A098",
       "selectable": true
     },
@@ -1121,14 +1121,14 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2024-09-09",
+      "date": "2024-09-15",
       "event": "WTT 冠军赛澳门站女单冠军（4:2 王艺迪）",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
-      "source": "WTT Champions Macao 2024",
+      "source": "央视 2024-09-15",
       "confidence": "高",
-      "note": "",
+      "note": "女单决赛 9/15",
       "id": "A102",
       "selectable": true
     },
@@ -1313,14 +1313,14 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2025-03-02",
+      "date": "2025-02-09",
       "event": "新加坡大满贯女单冠军（4:1 蒯曼）",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
-      "source": "WTT Singapore Smash 2025",
-      "confidence": "中",
-      "note": "Singapore Smash 2025 女单夺冠见于 WTT/Wikipedia；精确决赛日待核，置信中",
+      "source": "央视 2025-02-09",
+      "confidence": "高",
+      "note": "女单决赛 2/9",
       "id": "A151",
       "selectable": true
     },
@@ -1601,14 +1601,14 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2025-08-01",
+      "date": "2025-08-24",
       "event": "WTT Europe Smash（瑞典）女单冠军（4:2 王曼昱）",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
-      "source": "WTT Europe Smash Sweden 2025",
-      "confidence": "中",
-      "note": "取 8 月窗口代表日，精确决赛日待核，置信中",
+      "source": "Olympics.com Europe Smash Sweden 2025",
+      "confidence": "高",
+      "note": "女单决赛 8/24",
       "id": "A152",
       "selectable": true
     },
@@ -1625,14 +1625,14 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2025-09-01",
+      "date": "2025-09-14",
       "event": "WTT 冠军赛澳门站女单冠军（4:3 王曼昱）",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
-      "source": "WTT Champions Macao 2025",
-      "confidence": "中",
-      "note": "与王楚钦澳门站接近同期；精确日待核，置信中",
+      "source": "央广网 2025-09-14",
+      "confidence": "高",
+      "note": "女单与男单决赛同日",
       "id": "A153",
       "selectable": true
     },
