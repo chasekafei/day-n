@@ -54,16 +54,27 @@ function asRecord(value: unknown): NativeResult {
   return value !== null && typeof value === 'object' ? value as NativeResult : {};
 }
 
+function blankStoredText(value: string): boolean {
+  const text = value.replace(/^\uFEFF/, '').trim();
+  // 小红书没有缓存时可能返回空字符串，或再包一层 JSON 引号。这不是损坏的数据。
+  return text === '' || text === '""' || text === "''";
+}
+
+function missingStorage(value: unknown): boolean {
+  return value === null || typeof value === 'undefined' || (typeof value === 'string' && blankStoredText(value));
+}
+
 function parseStoredData(value: unknown): unknown {
-  if (value === null || typeof value === 'undefined') return null;
+  if (missingStorage(value)) return null;
   if (typeof value !== 'string') return value;
   let source = value.replace(/^\uFEFF/, '').trim();
-  if (!source) return null;
   for (let depth = 0; depth < 3; depth++) {
+    if (blankStoredText(source)) return null;
     const parsed = JSON.parse(source) as unknown;
     if (typeof parsed !== 'string') return parsed;
     source = parsed.replace(/^\uFEFF/, '').trim();
   }
+  if (blankStoredText(source)) return null;
   return JSON.parse(source) as unknown;
 }
 
@@ -110,6 +121,11 @@ function invoke(name: MethodName, options: NativeResult = {}, timeout = 60_000):
       if (settled) return;
       settled = true;
       window.clearTimeout(timer);
+      // 部分客户端直接把字符串交给 success。空字符串表示没有这项缓存。
+      if (typeof result === 'string' || result === null || typeof result === 'undefined') {
+        resolve({ data: typeof result === 'string' ? result : '' });
+        return;
+      }
       const record = asRecord(result);
       if (typeof record.errMsg === 'string' && /:fail\b/.test(record.errMsg)) {
         reject(platformError(record));
@@ -206,27 +222,29 @@ export async function loadLocal(key: string): Promise<unknown> {
       const message = error instanceof NativeCallError ? error.nativeMessage : error instanceof Error ? error.message : '';
       // Some client builds report a missing key via fail. Only explicit absence
       // is an empty store: permission, timeout and generic fail must stay errors.
-      if (/(?:key|data|value|item|缓存|数据).{0,40}(?:not[ _-]*(?:found|exist)|不存在|未找到)|no[ _-]*such[ _-]*key/i.test(message)) data = null;
+      if (/(?:key|data|value|item|缓存|数据).{0,40}(?:not[ _-]*(?:found|exist)|不存在|未找到|为空|是空)|no[ _-]*such[ _-]*key|empty[ _-]*(?:data|value|string)|数据为空|空字符串|getStorage:fail\s*$/i.test(message)) data = null;
       else throw error;
     }
+    // 空字符串和 null 都表示这项缓存还不存在，不能当成解析失败。
+    if (missingStorage(data)) data = null;
     // Upgrade path: a missing native value may still exist in the previous
     // low-version browser store. Migrate only validated JSON, without clearing
     // the old copy or pretending that a failed migration succeeded.
-    if ((data === null || typeof data === 'undefined') && hasMethod('setStorage')) {
+    if (data === null && hasMethod('setStorage') && !storageWrites.has(key)) {
       let previous: string | null = null;
       try {
         previous = localStorage.getItem(key);
       } catch {
         // Native storage can remain usable when browser storage is unavailable.
       }
-      if (previous !== null) {
+      if (typeof previous === 'string' && !blankStoredText(previous) && !storageWrites.has(key)) {
         try {
           parseStoredData(previous);
         } catch {
           throw new Error('本地设计数据无法读取，请重新制作。');
         }
         await invoke('setStorage', { key, data: previous, encrypt: false }, 8_000);
-        data = previous;
+        if (!storageWrites.has(key)) data = previous;
       }
     }
   } else {

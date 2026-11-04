@@ -66,7 +66,8 @@ async function restoreName(): Promise<void> {
   let hasCache = false;
   try {
     cached = await loadLocal(NAME_KEY);
-    hasCache = cached !== null && typeof cached !== 'undefined';
+    // 小红书没有这项缓存时可能给出空字符串。那表示还没存过，不是一份空名字。
+    hasCache = cached !== null && typeof cached !== 'undefined' && !(typeof cached === 'string' && cached.trim() === '');
   } catch { /* 读取失败时再看旧记录 */ }
   const name = hasCache ? storedName(cached) : storedName(readRecord()?.profileNickname);
   if (!hasCache && name) void saveLocal(NAME_KEY, { name }).catch(() => {});
