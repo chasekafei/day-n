@@ -9,10 +9,10 @@ import { loadLocal, saveImage, saveLocal, shareImage, isNative } from './platfor
 const app = document.querySelector<HTMLDivElement>('#app')!;
 const today = todayString();
 let view: 'home' | 'events' | 'result' | 'relations' | 'about' = 'home';
-let focus: Focus = 'shatou';
+let focus: Focus = 'sun-yingsha';
 let selected: EventItem | null = null;
 let result: CardResult | null = null;
-let template: TemplateId = 'ticket';
+let template: TemplateId = 'birthday';
 let query = '';
 let year = 'all';
 let type = 'all';
@@ -98,8 +98,8 @@ function focusDisplayName(currentFocus: Focus, nickname = ''): string {
   return currentFocus === 'custom' && nickname.trim() ? nickname.trim() : focusLabels[currentFocus];
 }
 
-const SHARE_TEMPLATES: TemplateId[] = ['ticket', 'badge', 'scoreboard'];
-const TEMPLATE_LABELS: Record<TemplateId, string> = { ticket: '票据', badge: '工作证', scoreboard: '记分牌', table: '球台' };
+const SHARE_TEMPLATES: TemplateId[] = ['birthday', 'ticket', 'badge', 'scoreboard'];
+const TEMPLATE_LABELS: Record<TemplateId, string> = { birthday: '生日限定', ticket: '票据', badge: '工作证', scoreboard: '记分牌', table: '球台' };
 
 function canGenerateEntry(): boolean {
   const dateReady = /^\d{4}-\d{2}-\d{2}$/.test(customDate) && customDate <= today;
@@ -155,11 +155,11 @@ function saveCurrent(): void {
 }
 
 function usesPhotoCard(current: TemplateId = template): boolean {
-  return current === 'badge' || current === 'scoreboard' || current === 'ticket';
+  return current === 'birthday' || current === 'badge' || current === 'scoreboard' || current === 'ticket';
 }
 
 function cardPreview(card: CardResult): string {
-  if (usesPhotoCard()) return `<img id="share-card" class="share-card" alt="${({ ticket: '票据', scoreboard: '记分牌', badge: '球迷证' } as Record<string, string>)[template] || '分享卡'}">`;
+  if (usesPhotoCard()) return `<img id="share-card" class="share-card" alt="${({ birthday: '生日限定', ticket: '票据', scoreboard: '记分牌', badge: '球迷证' } as Record<string, string>)[template] || '分享卡'}">`;
   const artwork = `./artwork/${template === 'table' ? 'table-base-v3-01.png' : `${template}-base-01.png`}`;
   return `<div class="card-preview ${template} with-art" style="background-image:url('${artwork}')">
     <div class="preview-top"><span>${PRODUCT_NAME}</span><span>${escapeHTML(focusDisplayName(card.focus, card.nickname))}</span></div>
@@ -208,11 +208,12 @@ function cardFields(): string {
   const name = `<label>${current === 'ticket' ? '观赛人' : '姓名'}<input id="card-nickname" value="${escapeHTML(userNickname)}" maxlength="16" placeholder="例如：小王"></label>`;
   const date = `<label>入坑时间<input id="card-date" type="date" value="${result.startDate}" max="${today}"></label>`;
   const days = `<label>入坑天数<input id="card-days" type="number" min="1" max="9999" inputmode="numeric" value="${result.days}"></label>`;
-  if (current === 'ticket') return `<div class="card-fields">${name.replace('<label>', '<label class="wide">')}${date}${days}<label class="wide">入坑节点<input id="card-event" value="${escapeHTML(result.eventTitle)}" maxlength="40"></label></div>`;
+  if (current === 'ticket' || current === 'birthday') return `<div class="card-fields">${name.replace('<label>', '<label class="wide">')}${date}${days}<label class="wide">入坑节点<input id="card-event" value="${escapeHTML(result.eventTitle)}" maxlength="40"></label></div>`;
   return `<div class="card-fields">${name}<label>地区<input id="card-region" value="${escapeHTML(userRegion)}" maxlength="16" placeholder="例如：广东 广州"></label>${date}${days}</div>`;
 }
 
 function shareTabIcon(id: TemplateId): string {
+  if (id === 'birthday') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 16.2 7.1 8.4l3.1 2.8L12 6.2l1.8 5 3.1-2.8 2.1 7.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M5.5 18.4h13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
   if (id === 'ticket') return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8.2A2.2 2.2 0 0 1 7.2 6h9.6A2.2 2.2 0 0 1 19 8.2v1.6a1.6 1.6 0 0 0 0 3.2v1.8A2.2 2.2 0 0 1 16.8 17H7.2A2.2 2.2 0 0 1 5 14.8v-1.8a1.6 1.6 0 0 0 0-3.2V8.2Z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M9 10h6M9 13h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
   if (id === 'badge') return '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="12" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="10" r="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 16h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
   return '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="7" width="17" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8 12h.01M12 12h.01M16 12h.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';

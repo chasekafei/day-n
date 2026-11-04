@@ -16,7 +16,7 @@ export type CardResult = {
   region: string;
 };
 
-const ARTWORK_PATHS: Record<Exclude<TemplateId, 'badge' | 'scoreboard' | 'ticket'>, string> = {
+const ARTWORK_PATHS: Record<Exclude<TemplateId, 'badge' | 'scoreboard' | 'ticket' | 'birthday'>, string> = {
   table: './artwork/table-base-v3-01.png',
 };
 
@@ -78,7 +78,7 @@ function fittedSize(ctx: CanvasRenderingContext2D, value: string, maxWidth: numb
 
 function drawFallback(ctx: CanvasRenderingContext2D, template: TemplateId, width: number, height: number): void {
   const colors: Record<TemplateId, [string, string]> = {
-    ticket: ['#f1e4cc', '#174f43'], scoreboard: ['#0c211c', '#f5c842'], badge: ['#5c0f2e', '#f3d6aa'], table: ['#0d8793', '#f5c842'],
+    birthday: ['#f7c5de', '#e23b8c'], ticket: ['#f1e4cc', '#174f43'], scoreboard: ['#0c211c', '#f5c842'], badge: ['#5c0f2e', '#f3d6aa'], table: ['#0d8793', '#f5c842'],
   };
   const [background, accent] = colors[template];
   ctx.fillStyle = background; ctx.fillRect(0, 0, width, height);
@@ -326,7 +326,100 @@ function renderTable(ctx: CanvasRenderingContext2D, result: CardResult): void {
   drawText(ctx, `${focusName(result)} · 日期记录`, 94, 1360, 22, white, 700, 700);
 }
 
+const BIRTHDAY_ARTWORK = './artwork/birthday-card.png';
+const BIRTHDAY_WIDTH = 1169;
+const BIRTHDAY_ANGLE = -6.8 * Math.PI / 180;
+const BIRTHDAY_INK = '#100e24';
+const BIRTHDAY_PINK = '#f12e8e';
+const BIRTHDAY_MARK = '#ffe56a';
+const BIRTHDAY_SLOTS = {
+  name: { x: 330, y: 574, size: 50, width: 230, stroke: 14 },
+  event: { x: 338, y: 658, size: 42, width: 400, stroke: 14 },
+  date: { x: 367, y: 756, size: 36, width: 330, stroke: 12 },
+  days: { x: 545, y: 854, size: 76, width: 220 },
+};
+
+function birthdayDate(value: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return value;
+  return `${Number(match[1])} 年 ${Number(match[2])} 月 ${Number(match[3])} 日`;
+}
+
+function fillRoundRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number): void {
+  const r = Math.min(radius, height / 2, Math.max(0, width) / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + width, y, x + width, y + height, r);
+  ctx.arcTo(x + width, y + height, x, y + height, r);
+  ctx.arcTo(x, y + height, x, y, r);
+  ctx.arcTo(x, y, x + width, y, r);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function prepareBirthdayText(ctx: CanvasRenderingContext2D, value: string, size: number, width: number, scale: number): { text: string; size: number; width: number } {
+  const text = value.trim();
+  let drawSize = size * scale;
+  const minSize = Math.max(16, 18 * scale);
+  font(ctx, 900, drawSize);
+  while (drawSize > minSize && ctx.measureText(text).width > width * scale) {
+    drawSize -= 2;
+    font(ctx, 900, drawSize);
+  }
+  const shown = fitText(ctx, text, width * scale, drawSize, 900);
+  return { text: shown, size: drawSize, width: ctx.measureText(shown).width };
+}
+
+function drawBirthdayText(ctx: CanvasRenderingContext2D, value: string, x: number, y: number, size: number, width: number, scale: number, color: string, stroke = 0, align: CanvasTextAlign = 'left'): number {
+  const text = value.trim();
+  if (!text) return 0;
+  const prepared = prepareBirthdayText(ctx, text, size, width, scale);
+  ctx.save();
+  ctx.translate(x * scale, y * scale);
+  ctx.rotate(BIRTHDAY_ANGLE);
+  ctx.textAlign = align;
+  ctx.textBaseline = 'alphabetic';
+  ctx.lineJoin = 'round';
+  font(ctx, 900, prepared.size);
+  if (stroke > 0) {
+    ctx.lineWidth = stroke * scale;
+    ctx.strokeStyle = '#ffffff';
+    ctx.strokeText(prepared.text, 0, 0);
+  }
+  ctx.fillStyle = color;
+  ctx.fillText(prepared.text, 0, 0);
+  ctx.restore();
+  return prepared.width;
+}
+
+async function renderBirthday(result: CardResult): Promise<HTMLCanvasElement> {
+  const canvas = document.createElement('canvas');
+  const artwork = await loadImage(BIRTHDAY_ARTWORK);
+  canvas.width = artwork.naturalWidth;
+  canvas.height = artwork.naturalHeight;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return canvas;
+  ctx.drawImage(artwork, 0, 0);
+  const scale = artwork.naturalWidth / BIRTHDAY_WIDTH;
+  drawBirthdayText(ctx, result.profileNickname, BIRTHDAY_SLOTS.name.x, BIRTHDAY_SLOTS.name.y, BIRTHDAY_SLOTS.name.size, BIRTHDAY_SLOTS.name.width, scale, BIRTHDAY_INK, BIRTHDAY_SLOTS.name.stroke);
+  const event = result.eventTitle.trim();
+  if (event) {
+    const prepared = prepareBirthdayText(ctx, event, BIRTHDAY_SLOTS.event.size, BIRTHDAY_SLOTS.event.width, scale);
+    ctx.save();
+    ctx.translate(BIRTHDAY_SLOTS.event.x * scale, BIRTHDAY_SLOTS.event.y * scale);
+    ctx.rotate(BIRTHDAY_ANGLE);
+    ctx.fillStyle = BIRTHDAY_MARK;
+    fillRoundRect(ctx, -5 * scale, -4 * scale, prepared.width + 28 * scale, 20 * scale, 8 * scale);
+    ctx.restore();
+  }
+  drawBirthdayText(ctx, event, BIRTHDAY_SLOTS.event.x, BIRTHDAY_SLOTS.event.y, BIRTHDAY_SLOTS.event.size, BIRTHDAY_SLOTS.event.width, scale, BIRTHDAY_INK, BIRTHDAY_SLOTS.event.stroke);
+  drawBirthdayText(ctx, birthdayDate(result.startDate), BIRTHDAY_SLOTS.date.x, BIRTHDAY_SLOTS.date.y, BIRTHDAY_SLOTS.date.size, BIRTHDAY_SLOTS.date.width, scale, BIRTHDAY_INK, BIRTHDAY_SLOTS.date.stroke);
+  drawBirthdayText(ctx, String(Math.max(0, result.days)), BIRTHDAY_SLOTS.days.x, BIRTHDAY_SLOTS.days.y, BIRTHDAY_SLOTS.days.size, BIRTHDAY_SLOTS.days.width, scale, BIRTHDAY_PINK, 0, 'right');
+  return canvas;
+}
+
 export async function renderCard(result: CardResult, template: TemplateId, width = 1080, height = 1440): Promise<HTMLCanvasElement> {
+  if (template === 'birthday') return renderBirthday(result);
   if (template === 'badge') return renderBadge(result);
   if (template === 'scoreboard') return renderScoreboard(result);
   if (template === 'ticket') return renderTicket(result);

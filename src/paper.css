@@ -499,14 +499,16 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 3px;
   min-height: 58px;
-  padding: 8px 4px 14px;
+  padding: 8px 2px 14px;
   background: url('../artwork/paper/share-tab-off.png') center / 100% 100% no-repeat;
   color: var(--ink);
+  font-size: 12px;
   font-weight: 800;
 }
-.share-tab svg { width: 18px; height: 18px; flex: none; }
+.share-tab span { white-space: nowrap; }
+.share-tab svg { width: 15px; height: 15px; flex: none; }
 .share-tab.on {
   background-image: url('../artwork/paper/share-tab-on.png');
   color: #fff;
@@ -542,7 +544,6 @@ textarea {
 .share-tabs, .share-actions {
   position: static;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   margin: 8px 16px 14px;
   overflow: visible;
@@ -550,7 +551,8 @@ textarea {
   border: 0;
   box-shadow: none;
 }
-.share-actions { align-items: end; }
+.share-tabs { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.share-actions { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; }
 .share-actions button { padding: 0; background: none; overflow: visible; }
 .share-actions img { display: block; width: 100%; height: auto; }
 .page-result .card-stage,

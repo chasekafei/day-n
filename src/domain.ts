@@ -1,15 +1,15 @@
 import { EVENT_DATA } from './data.ts';
 
-export type Focus = 'wang-chuqin' | 'sun-yingsha' | 'shatou' | 'custom';
+export type Focus = 'sun-yingsha' | 'wang-chuqin' | 'shatou' | 'custom';
 export type Mode = 'entry' | 'between' | 'target' | 'special';
-export type TemplateId = 'ticket' | 'scoreboard' | 'badge' | 'table';
+export type TemplateId = 'birthday' | 'ticket' | 'scoreboard' | 'badge' | 'table';
 export type EventItem = (typeof EVENT_DATA.items)[number];
 
 export const PRODUCT_NAME = '入坑日第 N 天';
 
 export const focusLabels: Record<Focus, string> = {
-  'wang-chuqin': '王楚钦',
   'sun-yingsha': '孙颖莎',
+  'wang-chuqin': '王楚钦',
   shatou: '莎头',
   custom: '自定义',
 };
