@@ -137,16 +137,15 @@ function entrySelector(page: 'home' | 'events', hideTabs = false): string {
   if (focus === 'custom') {
     return `<div class="custom-entry-panel"><p class="entry-panel-lead">写下你的入坑对象和日期，生成专属入坑卡。</p><label>入坑对象<input id="custom-person" value="${escapeHTML(customPerson)}" maxlength="24" placeholder="例如：我喜欢的运动员或组合"></label><label>入坑时间<input id="custom-date" type="date" value="${customDate}" max="${today}"></label></div>${entryGenerateButton()}`;
   }
-  const list = eventsForFocus(focus, query, year, type);
   const years = yearsForFocus(focus).slice(0, 8);
   const types = typesForFocus(focus);
   const searchId = page === 'home' ? 'home-event-search' : 'event-search';
-  const visibleList = page === 'home' ? list : list.slice(0, 60);
+  const visibleList = visibleEvents(page);
   const entryTabs = `<div class="entry-method-tabs"><button class="${entryMethod === 'event' ? 'active' : ''}" data-entry-method="event">通过事件选择日期</button><button class="${entryMethod === 'date' ? 'active' : ''}" data-entry-method="date">手动选择日期</button></div>`;
   const selectionNote = entryMethod === 'event' && !selected ? '<p class="entry-selection-hint">选择一个事件，就以这一天作为你的入坑时间。</p>' : '';
   const content = entryMethod === 'date'
     ? `<div class="manual-entry-panel"><label>入坑时间<input id="manual-date" type="date" value="${customDate}" max="${today}"></label><p>选定日期后，点击底部“生成”创建入坑卡。</p></div>`
-    : `${selectionNote}<div class="home-search search-row"><input id="${searchId}" value="${escapeHTML(query)}" placeholder="搜索赛事、名场面或年份"></div><div class="filter-row"><button class="filter-chip ${year === 'all' ? 'active' : ''}" data-year="all">全部年份</button>${years.map(value => `<button class="filter-chip ${year === value ? 'active' : ''}" data-year="${value}">${value}</button>`).join('')}</div><div class="filter-row type-filters"><button class="filter-chip ${type === 'all' ? 'active' : ''}" data-type="all">全部类型</button>${types.map(value => `<button class="filter-chip ${type === value ? 'active' : ''}" data-type="${value}">${escapeHTML(value)}</button>`).join('')}</div><div class="library-note">${page === 'home' ? '全部事件库' : '事件库'} · 已收录 ${visibleList.length} 条可选事件 · 数据截至 ${EVENT_DATA.data_as_of}</div><div class="event-list ${page === 'events' ? 'large' : 'home-library'}">${visibleList.length ? visibleList.map(eventRow).join('') : '<div class="empty-state">没有找到匹配事件</div>'}</div>`;
+    : `${selectionNote}<div class="home-search search-row"><input id="${searchId}" value="${escapeHTML(query)}" placeholder="搜索赛事、名场面或年份"></div><div class="filter-row"><button class="filter-chip ${year === 'all' ? 'active' : ''}" data-year="all">全部年份</button>${years.map(value => `<button class="filter-chip ${year === value ? 'active' : ''}" data-year="${value}">${value}</button>`).join('')}</div><div class="filter-row type-filters"><button class="filter-chip ${type === 'all' ? 'active' : ''}" data-type="all">全部类型</button>${types.map(value => `<button class="filter-chip ${type === value ? 'active' : ''}" data-type="${value}">${escapeHTML(value)}</button>`).join('')}</div><div class="library-note">${eventListNote(page, visibleList.length)}</div><div class="event-list ${page === 'events' ? 'large' : 'home-library'}">${eventListHTML(visibleList)}</div>`;
   return `${hideTabs ? '' : entryTabs}${content}${entryGenerateButton()}`;
 }
 
@@ -193,6 +192,44 @@ function methodTabs(): string {
 function homeView(): string {
   const hits = `<div class="poster"><img class="poster-art" src="./artwork/paper/home-top.png" alt="入坑日·第 N 天，从这一场，开始热爱"></div>`;
   return shell(`<section class="home-content poster-page">${hits}<div class="poster-body">${focusPicks()}${methodTabs()}${entrySelector('home', true)}</div></section>`, 'home');
+}
+
+function visibleEvents(page: 'home' | 'events'): EventItem[] {
+  const list = eventsForFocus(focus, query, year, type);
+  return page === 'home' ? list : list.slice(0, 60);
+}
+
+function eventListNote(page: 'home' | 'events', count: number): string {
+  return `${page === 'home' ? '全部事件库' : '事件库'} · 已收录 ${count} 条可选事件 · 数据截至 ${EVENT_DATA.data_as_of}`;
+}
+
+function eventListHTML(items: EventItem[]): string {
+  return items.length ? items.map(eventRow).join('') : '<div class="empty-state">没有找到匹配事件</div>';
+}
+
+function chooseEvent(item: EventItem): void {
+  selected = item;
+  customDate = item.date;
+  entryMethod = 'event';
+  render();
+}
+
+function bindEventRows(root: ParentNode): void {
+  root.querySelectorAll<HTMLButtonElement>('[data-event]').forEach(button => button.addEventListener('click', () => {
+    const item = EVENT_DATA.items.find(value => value.id === button.dataset.event);
+    if (item) chooseEvent(item);
+  }));
+}
+
+function refreshEventList(): void {
+  const page: 'home' | 'events' = view === 'events' ? 'events' : 'home';
+  const items = visibleEvents(page);
+  const note = app.querySelector('.library-note');
+  const list = app.querySelector('.event-list');
+  if (note) note.textContent = eventListNote(page, items.length);
+  if (!list) return;
+  list.innerHTML = eventListHTML(items);
+  bindEventRows(list);
 }
 
 function eventRow(item: EventItem): string {
@@ -358,7 +395,7 @@ function bindEvents(): void {
     else if (action === 'comment') void doShare('comment');
   }));
   app.querySelectorAll<HTMLButtonElement>('[data-focus]').forEach(button => button.addEventListener('click', () => { focus = button.dataset.focus as Focus; query = ''; year = 'all'; type = 'all'; selected = null; entryMethod = 'event'; customPerson = ''; render(); }));
-  app.querySelectorAll<HTMLButtonElement>('[data-event]').forEach(button => button.addEventListener('click', () => { const item = EVENT_DATA.items.find(value => value.id === button.dataset.event); if (item) { selected = item; customDate = item.date; entryMethod = 'event'; render(); } }));
+  bindEventRows(app);
   app.querySelectorAll<HTMLButtonElement>('[data-year]').forEach(button => button.addEventListener('click', () => { year = button.dataset.year || 'all'; render(); }));
   app.querySelectorAll<HTMLButtonElement>('[data-type]').forEach(button => button.addEventListener('click', () => { type = button.dataset.type || 'all'; render(); }));
   app.querySelectorAll<HTMLButtonElement>('[data-template]').forEach(button => button.addEventListener('click', () => { template = button.dataset.template as TemplateId; saveCurrent(); render(); }));
@@ -369,15 +406,22 @@ function bindEvents(): void {
     render();
   }));
   app.querySelectorAll<HTMLButtonElement>('[data-entry-method]').forEach(button => button.addEventListener('click', () => { entryMethod = button.dataset.entryMethod as 'event' | 'date'; render(); }));
-  app.querySelectorAll<HTMLInputElement>('#event-search, #home-event-search').forEach(search => search.addEventListener('input', () => {
-    query = search.value;
-    const searchId = search.id;
-    window.requestAnimationFrame(() => {
-      render();
-      const nextSearch = app.querySelector<HTMLInputElement>(`#${searchId}`);
-      if (nextSearch) { nextSearch.focus(); nextSearch.setSelectionRange(nextSearch.value.length, nextSearch.value.length); }
+  app.querySelectorAll<HTMLInputElement>('#event-search, #home-event-search').forEach(search => {
+    const apply = () => {
+      query = search.value;
+      refreshEventList();
+    };
+    // 组字时整页重绘会拆掉输入框，手机输入法就续不上。确认成字后再刷新列表。
+    search.addEventListener('compositionstart', () => { search.dataset.composing = '1'; });
+    search.addEventListener('compositionend', () => {
+      delete search.dataset.composing;
+      apply();
     });
-  }));
+    search.addEventListener('input', event => {
+      if (search.dataset.composing === '1' || ('isComposing' in event && event.isComposing)) return;
+      apply();
+    });
+  });
   const relationASelect = app.querySelector<HTMLSelectElement>('#relation-a'); if (relationASelect) { if (relationA) relationASelect.value = relationA.id; relationASelect.addEventListener('change', () => { relationA = EVENT_DATA.items.find(item => item.id === relationASelect.value) || relationA; render(); }); }
   const relationBSelect = app.querySelector<HTMLSelectElement>('#relation-b'); if (relationBSelect) { if (relationB) relationBSelect.value = relationB.id; relationBSelect.addEventListener('change', () => { relationB = EVENT_DATA.items.find(item => item.id === relationBSelect.value) || relationB; render(); }); }
   const relationDateAInput = app.querySelector<HTMLInputElement>('#relation-date-a'); if (relationDateAInput) relationDateAInput.addEventListener('change', () => { relationDateA = relationDateAInput.value || relationDateA; render(); });
