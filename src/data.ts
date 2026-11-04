@@ -1,12 +1,13 @@
 // Imported from the reviewed prototype data. Source URLs stay in the research notes and are not shipped to the mini-tool.
 export const EVENT_DATA = {
-  "data_as_of": "2026-10-30",
+  "data_as_of": "2026-11-04",
   "timezone": "Asia/Shanghai",
-  "count": 186,
+  "count": 182,
   "items": [
     {
       "date": "2000-05-11",
       "event": "王楚钦生日（0511）",
+      "shortEventTitle": "王楚钦生日（2000-05-11）",
       "type": "生日",
       "who": "王楚钦",
       "is_title": false,
@@ -19,6 +20,7 @@ export const EVENT_DATA = {
     {
       "date": "2000-11-04",
       "event": "孙颖莎生日（1104）",
+      "shortEventTitle": "孙颖莎生日（2000-11-04）",
       "type": "生日",
       "who": "孙颖莎",
       "is_title": false,
@@ -31,6 +33,7 @@ export const EVENT_DATA = {
     {
       "date": "2017-01-20",
       "event": "通过国乒女队一二队升降赛进入国家一队（与顾若辰、刘曦等同批）",
+      "shortEventTitle": "进入国家一队",
       "type": "里程碑",
       "who": "孙颖莎",
       "is_title": false,
@@ -43,6 +46,7 @@ export const EVENT_DATA = {
     {
       "date": "2017-06-17",
       "event": "日本公开赛女双冠军（与陈幸同）：成人组首站国际赛即夺冠",
+      "shortEventTitle": "17 年日本公开赛女双冠军",
       "type": "双打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -55,6 +59,7 @@ export const EVENT_DATA = {
     {
       "date": "2017-06-18",
       "event": "日本公开赛女单冠军：1:3落后逆转陈梦 4:3——成人组首冠，粉丝公认经典「一黑到底」入坑点",
+      "shortEventTitle": "17 年日本公开赛女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -67,6 +72,7 @@ export const EVENT_DATA = {
     {
       "date": "2017-07-04",
       "event": "亚青赛（韩国牙山）U18 混双冠军：首次以混双搭档出现在国际赛场并夺冠，3:0 胜薛飞/钱天一",
+      "shortEventTitle": "17 年亚少 U18 混双冠军",
       "type": "混双·冠军",
       "who": "双人",
       "is_title": true,
@@ -79,6 +85,7 @@ export const EVENT_DATA = {
     {
       "date": "2017-09-06",
       "event": "第十三届全运会男单半决赛负马龙（青年国手首次高曝光全运舞台）",
+      "shortEventTitle": "第十三届全运会男单铜排",
       "type": "名场面",
       "who": "王楚钦",
       "is_title": false,
@@ -91,6 +98,7 @@ export const EVENT_DATA = {
     {
       "date": "2017-12-03",
       "event": "世青赛（意大利）青年女单冠军",
+      "shortEventTitle": "世青赛（意大利）青年女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": false,
@@ -103,6 +111,7 @@ export const EVENT_DATA = {
     {
       "date": "2017-12-02",
       "event": "世青赛（意大利里瓦德尔加尔达）青年混双铜牌：半决赛负韩国安在炫/金芝荷",
+      "shortEventTitle": "世青赛青年混双铜牌",
       "type": "混双·奖牌",
       "who": "双人",
       "is_title": false,
@@ -115,6 +124,7 @@ export const EVENT_DATA = {
     {
       "date": "2018-05-27",
       "event": "香港公开赛女双冠军（与陈幸同）",
+      "shortEventTitle": "18 年香港公开赛女双冠军",
       "type": "双打·冠军",
       "who": "孙颖莎",
       "is_title": false,
@@ -127,6 +137,7 @@ export const EVENT_DATA = {
     {
       "date": "2018-08-28",
       "event": "雅加达亚运会女团金牌（孙颖莎出场）",
+      "shortEventTitle": "雅加达亚运会女团金牌",
       "type": "团体·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -139,6 +150,7 @@ export const EVENT_DATA = {
     {
       "date": "2018-08-28",
       "event": "雅加达亚运会男团金牌",
+      "shortEventTitle": "雅加达亚运会男团金牌",
       "type": "团体·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -151,6 +163,7 @@ export const EVENT_DATA = {
     {
       "date": "2018-08-30",
       "event": "雅加达亚运会混双金牌：先丢两局后连赢四局，4:2 逆转林高远/王曼昱——第一个成年综合性大赛冠军",
+      "shortEventTitle": "雅加达亚运会混双金牌",
       "type": "混双·冠军",
       "who": "双人",
       "is_title": true,
@@ -163,6 +176,7 @@ export const EVENT_DATA = {
     {
       "date": "2018-09-13",
       "event": "全锦赛（鞍山）混双冠军：4:3 林高远/王曼昱；夺冠后「捏脸莎」成早期粉丝名场面",
+      "shortEventTitle": "全锦赛（鞍山）混双冠军",
       "type": "混双·冠军",
       "who": "双人",
       "is_title": true,
@@ -175,6 +189,7 @@ export const EVENT_DATA = {
     {
       "date": "2018-09-13",
       "event": "全锦赛混双夺冠后「捏脸莎」表情包出圈——早期 CP 粉名场面（同日冠军见上条）",
+      "shortEventTitle": "全锦赛混双夺冠后「捏脸」表情包出圈",
       "type": "名场面",
       "who": "双人",
       "is_title": false,
@@ -187,6 +202,7 @@ export const EVENT_DATA = {
     {
       "date": "2018-10-11",
       "event": "青奥会男单金牌（4:1 张本智和）",
+      "shortEventTitle": "青奥会男单金牌",
       "type": "单打·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -199,6 +215,7 @@ export const EVENT_DATA = {
     {
       "date": "2018-10-11",
       "event": "青奥会女单金牌（4:1 平野美宇）",
+      "shortEventTitle": "青奥会女单金牌",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -211,6 +228,7 @@ export const EVENT_DATA = {
     {
       "date": "2018-10-15",
       "event": "布宜诺斯艾利斯青奥会混合团体金牌（2:1 日本；混双 3:1 张本智和/平野美宇）",
+      "shortEventTitle": "布宜诺斯艾利斯青奥会混合团体金牌",
       "type": "混团·冠军",
       "who": "双人",
       "is_title": true,
@@ -223,6 +241,7 @@ export const EVENT_DATA = {
     {
       "date": "2019-04-27",
       "event": "布达佩斯世乒赛男双金牌（与马龙），4:1 胜 Ionescu/Robles",
+      "shortEventTitle": "布达佩斯世乒赛男双金牌",
       "type": "双打·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -235,6 +254,7 @@ export const EVENT_DATA = {
     {
       "date": "2019-04-28",
       "event": "布达佩斯世乒赛女双冠军（与王曼昱）：4:2 逆转早田希娜/伊藤美诚——第一个成年世界冠军（女双）",
+      "shortEventTitle": "布达佩斯世乒赛女双冠军",
       "type": "双打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -247,6 +267,7 @@ export const EVENT_DATA = {
     {
       "date": "2019-06-16",
       "event": "日本公开赛女单冠军（4:3 刘诗雯）",
+      "shortEventTitle": "日本公开赛女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -259,6 +280,7 @@ export const EVENT_DATA = {
     {
       "date": "2019-07-14",
       "event": "澳大利亚公开赛女单冠军（4:0 丁宁）",
+      "shortEventTitle": "澳大利亚公开赛女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -269,20 +291,9 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2019-07-25",
-      "event": "全锦赛混双首轮出局（以卫冕冠军身份）——说明 2018 全锦赛混双冠军是两人",
-      "type": "混双·纪事",
-      "who": "双人",
-      "is_title": false,
-      "source": "央视网 2019-07-25",
-      "confidence": "高",
-      "note": "2018 全锦赛混双夺冠的具体日期 待核实",
-      "id": "A012",
-      "selectable": false
-    },
-    {
       "date": "2019-09-21",
       "event": "亚锦赛（日惹）女单冠军（首次参赛，3:0 刘诗雯）",
+      "shortEventTitle": "亚锦赛（日惹）女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -295,6 +306,7 @@ export const EVENT_DATA = {
     {
       "date": "2019-09-21",
       "event": "亚锦赛（日惹）混双亚军，1:3 负许昕/刘诗雯",
+      "shortEventTitle": "亚锦赛（日惹）混双亚军",
       "type": "混双·奖牌",
       "who": "双人",
       "is_title": false,
@@ -307,6 +319,7 @@ export const EVENT_DATA = {
     {
       "date": "2019-10-12",
       "event": "德国公开赛混双冠军（许昕/孙颖莎，3:1 胜王楚钦/王曼昱）",
+      "shortEventTitle": "德国公开赛混双冠军",
       "type": "混双·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -319,6 +332,7 @@ export const EVENT_DATA = {
     {
       "date": "2019-10-13",
       "event": "德国公开赛女单冠军（4:1 伊藤美诚）",
+      "shortEventTitle": "德国公开赛女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -331,6 +345,7 @@ export const EVENT_DATA = {
     {
       "date": "2019-11-10",
       "event": "团体世界杯（东京）决赛：决胜盘前 7:10 落后逆转伊藤美诚（8-11, 9-11, 11-6, 11-7, 12-10），她自己称为「最珍贵的一场」",
+      "shortEventTitle": "团体世界杯（东京）决赛",
       "type": "名场面",
       "who": "孙颖莎",
       "is_title": false,
@@ -341,20 +356,9 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2019-11-13",
-      "event": "奥地利公开赛资格赛情绪失控摔拍后，中国乒协宣布停赛三个月（11/13–2020/02/13）",
-      "type": "纪事（不做庆祝）",
-      "who": "王楚钦",
-      "is_title": false,
-      "source": "中国乒协官网处罚决定 2019-11-14；ITTF 中文 2019-11",
-      "confidence": "高",
-      "note": "只作时间轴，不做纪念日卡；软表述",
-      "id": "A071",
-      "selectable": false
-    },
-    {
       "date": "2020-03-05",
       "event": "卡塔尔公开赛：禁赛期满后复出首站，男单晋级八强",
+      "shortEventTitle": "卡塔尔公开赛",
       "type": "里程碑",
       "who": "王楚钦",
       "is_title": false,
@@ -367,6 +371,7 @@ export const EVENT_DATA = {
     {
       "date": "2020-03-07",
       "event": "卡塔尔公开赛混双亚军（1:3 水谷隼/伊藤美诚）",
+      "shortEventTitle": "卡塔尔公开赛混双亚军",
       "type": "混双·奖牌",
       "who": "双人",
       "is_title": false,
@@ -379,6 +384,7 @@ export const EVENT_DATA = {
     {
       "date": "2020-11-10",
       "event": "威海女单世界杯银牌：决赛负陈梦——世界杯个人首枚奖牌",
+      "shortEventTitle": "威海女单世界杯银牌",
       "type": "单打·奖牌",
       "who": "孙颖莎",
       "is_title": false,
@@ -391,6 +397,7 @@ export const EVENT_DATA = {
     {
       "date": "2021-07-29",
       "event": "东京奥运会女单银牌",
+      "shortEventTitle": "东京奥运会女单银牌",
       "type": "单打·奖牌",
       "who": "孙颖莎",
       "is_title": false,
@@ -403,6 +410,7 @@ export const EVENT_DATA = {
     {
       "date": "2021-08-05",
       "event": "东京奥运会女团金牌（3:0 日本）",
+      "shortEventTitle": "东京奥运会女团金牌",
       "type": "团体·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -415,6 +423,7 @@ export const EVENT_DATA = {
     {
       "date": "2021-09-25",
       "event": "第十四届全运会男双金牌（王楚钦/马龙）",
+      "shortEventTitle": "第十四届全运会男双金牌",
       "type": "双打·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -427,6 +436,7 @@ export const EVENT_DATA = {
     {
       "date": "2021-09-25",
       "event": "第十四届全运会女单银牌（决赛负王曼昱）",
+      "shortEventTitle": "第十四届全运会女单银牌",
       "type": "单打·奖牌",
       "who": "孙颖莎",
       "is_title": false,
@@ -439,6 +449,7 @@ export const EVENT_DATA = {
     {
       "date": "2021-11-28",
       "event": "休斯敦世乒赛混双夺冠后拥抱庆祝——粉丝公认「最美好的开始」名场面（当地 11/28）",
+      "shortEventTitle": "休斯敦世乒赛混双夺冠拥抱",
       "type": "名场面",
       "who": "双人",
       "is_title": false,
@@ -451,6 +462,7 @@ export const EVENT_DATA = {
     {
       "date": "2021-11-29",
       "event": "休斯敦世乒赛混双冠军：3:0 张本智和/早田希娜，第一个世界冠军（混双）",
+      "shortEventTitle": "休斯敦世乒赛混双冠军",
       "type": "混双·冠军",
       "who": "双人",
       "is_title": true,
@@ -463,6 +475,7 @@ export const EVENT_DATA = {
     {
       "date": "2021-11-30",
       "event": "休斯敦世乒赛女单银牌（2:4 王曼昱）",
+      "shortEventTitle": "休斯敦世乒赛女单银牌",
       "type": "单打·奖牌",
       "who": "孙颖莎",
       "is_title": false,
@@ -475,6 +488,7 @@ export const EVENT_DATA = {
     {
       "date": "2021-11-30",
       "event": "休斯敦世乒赛女双卫冕（与王曼昱），3:0 伊藤美诚/早田希娜",
+      "shortEventTitle": "休斯敦世乒赛女双卫冕",
       "type": "双打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -487,6 +501,7 @@ export const EVENT_DATA = {
     {
       "date": "2021-12-07",
       "event": "WTT Cup Finals（新加坡）女单冠军（4:2 王艺迪）——WTT 年终赛首冠",
+      "shortEventTitle": "21 年 WTT 新加坡总决赛女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -499,6 +514,7 @@ export const EVENT_DATA = {
     {
       "date": "2022-02-01",
       "event": "首次登上女单世界第一",
+      "shortEventTitle": "首次登上女单世界第一",
       "type": "里程碑",
       "who": "孙颖莎",
       "is_title": false,
@@ -511,6 +527,7 @@ export const EVENT_DATA = {
     {
       "date": "2022-03-16",
       "event": "WTT 新加坡大满贯混双冠军（3:0 林昀儒/郑怡静），也是 WTT 大满贯史上第一个冠军",
+      "shortEventTitle": "WTT 新加坡大满贯混双冠军",
       "type": "混双·冠军",
       "who": "双人",
       "is_title": true,
@@ -523,6 +540,7 @@ export const EVENT_DATA = {
     {
       "date": "2022-10-08",
       "event": "成都世乒赛女团金牌（孙颖莎出场），中国女团五连冠",
+      "shortEventTitle": "成都世乒赛女团金牌（五连冠）",
       "type": "团体·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -535,6 +553,7 @@ export const EVENT_DATA = {
     {
       "date": "2022-10-09",
       "event": "成都世乒赛男团金牌（王楚钦出场），中国男团十连冠",
+      "shortEventTitle": "成都世乒赛男团金牌（十连冠）",
       "type": "团体·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -547,6 +566,7 @@ export const EVENT_DATA = {
     {
       "date": "2022-10-23",
       "event": "WTT 冠军赛澳门站：王楚钦男单冠军、孙颖莎女单冠军同日登顶",
+      "shortEventTitle": "WTT 冠军赛澳门站顶峰相见",
       "type": "单打·冠军",
       "who": "双人",
       "is_title": true,
@@ -559,6 +579,7 @@ export const EVENT_DATA = {
     {
       "date": "2022-10-30",
       "event": "WTT 世界杯决赛（新乡）男单冠军（4:2 张本智和）",
+      "shortEventTitle": "WTT 世界杯决赛（新乡）男单冠军",
       "type": "单打·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -571,6 +592,7 @@ export const EVENT_DATA = {
     {
       "date": "2022-10-30",
       "event": "WTT 世界杯决赛（新乡）女单冠军（4:3 陈梦）",
+      "shortEventTitle": "WTT 世界杯决赛（新乡）女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -583,6 +605,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-03-16",
       "event": "WTT 新加坡大满贯混双卫冕（3:1 张本智和/早田希娜）",
+      "shortEventTitle": "WTT 新加坡大满贯混双卫冕",
       "type": "混双·冠军",
       "who": "双人",
       "is_title": true,
@@ -595,6 +618,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-03-19",
       "event": "WTT 新加坡大满贯女单冠军（4:1 钱天一），本站三冠（含混双）",
+      "shortEventTitle": "WTT 新加坡大满贯女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -607,6 +631,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-04-15",
       "event": "WTT 冠军赛新乡站女单冠军（4:1 王艺迪）",
+      "shortEventTitle": "WTT 冠军赛新乡站女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -619,6 +644,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-04-23",
       "event": "WTT 冠军赛澳门站男单冠军（4:0 马龙）",
+      "shortEventTitle": "WTT 冠军赛澳门站男单冠军",
       "type": "单打·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -631,6 +657,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-05-26",
       "event": "德班世乒赛混双卫冕（3:0 张本智和/早田希娜）",
+      "shortEventTitle": "德班世乒赛混双卫冕冠军",
       "type": "混双·冠军",
       "who": "双人",
       "is_title": true,
@@ -643,6 +670,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-05-26",
       "event": "德班世乒赛混双卫冕后：王楚钦打开奖杯盖与孙颖莎互动——「最暖心一幕」名场面",
+      "shortEventTitle": "德班世乒赛混双卫冕后互动",
       "type": "名场面",
       "who": "双人",
       "is_title": false,
@@ -655,6 +683,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-05-28",
       "event": "德班世乒赛女单冠军（4:2 陈梦），第一个世锦赛女单冠军",
+      "shortEventTitle": "德班世乒赛女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -667,6 +696,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-07-04",
       "event": "首次登上男单世界第一",
+      "shortEventTitle": "首次登上男单世界第一",
       "type": "里程碑",
       "who": "王楚钦",
       "is_title": false,
@@ -679,6 +709,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-07-09",
       "event": "WTT Star Contender 卢布尔雅那女单冠军（4:3 陈梦）",
+      "shortEventTitle": "WTT 球星挑战赛卢布尔雅那女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -691,6 +722,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-07-13",
       "event": "科颜氏官宣王楚钦为品牌挚友（早期个人商务合作节点）",
+      "shortEventTitle": "科颜氏官宣品牌挚友",
       "type": "代言",
       "who": "王楚钦",
       "is_title": false,
@@ -703,6 +735,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-08-21",
       "event": "松下空调官宣王楚钦为「元生活力」代言人（青岛驭氧新品发布会）",
+      "shortEventTitle": "松下空调官宣「元生活力」代言人",
       "type": "代言",
       "who": "王楚钦",
       "is_title": false,
@@ -715,6 +748,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-09-26",
       "event": "杭州亚运会女团金牌（孙颖莎出场）",
+      "shortEventTitle": "杭州亚运会女团金牌",
       "type": "团体·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -727,6 +761,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-09-26",
       "event": "杭州亚运会男团金牌（王楚钦出场）",
+      "shortEventTitle": "杭州亚运会男团金牌",
       "type": "团体·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -739,6 +774,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-09-30",
       "event": "杭州亚运会混双卫冕（4:1 林高远/王艺迪）",
+      "shortEventTitle": "杭州亚运会混双卫冕冠军",
       "type": "混双·冠军",
       "who": "双人",
       "is_title": true,
@@ -751,6 +787,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-10-01",
       "event": "杭州亚运会男双金牌（与樊振东）",
+      "shortEventTitle": "杭州亚运会男双金牌",
       "type": "双打·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -763,6 +800,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-10-01",
       "event": "杭州亚运会女单金牌（4:1 早田希娜），本届个人第三金",
+      "shortEventTitle": "杭州亚运会女单金牌，本届个人三金",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -775,6 +813,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-10-02",
       "event": "杭州亚运会男单金牌（4:3 樊振东），单届亚运 4 金",
+      "shortEventTitle": "杭州亚运会男单金牌，单届亚运四冠王",
       "type": "单打·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -787,6 +826,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-10-08",
       "event": "WTT Star Contender 兰州女单冠军（4:0 陈梦）",
+      "shortEventTitle": "WTT 球星挑战赛兰州女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -799,6 +839,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-12-10",
       "event": "首届混合团体世界杯（成都）冠军，8:1 韩国，混双出场",
+      "shortEventTitle": "首届混合团体世界杯（成都）冠军",
       "type": "混团·冠军",
       "who": "双人",
       "is_title": true,
@@ -811,6 +852,7 @@ export const EVENT_DATA = {
     {
       "date": "2023-12-17",
       "event": "WTT 名古屋女子总决赛：女单冠军 + 女双冠军（与王曼昱）双冠",
+      "shortEventTitle": "WTT 名古屋女子总决赛双冠",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -823,6 +865,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-01-05",
       "event": "WTT 多哈男子总决赛男单冠军（4:0 樊振东）——总决赛二连冠",
+      "shortEventTitle": "WTT 多哈男子总决赛男单冠军",
       "type": "单打·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -835,6 +878,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-01-13",
       "event": "WTT Star Contender 多哈女单冠军（4:1 陈梦）",
+      "shortEventTitle": "WTT 球星挑战赛多哈女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -847,6 +891,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-02-25",
       "event": "釜山世乒赛男团金牌（王楚钦出场），中国男团十一连冠",
+      "shortEventTitle": "釜山世乒赛男团金牌（十一连冠）",
       "type": "团体·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -859,6 +904,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-02-24",
       "event": "釜山世乒赛女团金牌（孙颖莎出场）",
+      "shortEventTitle": "釜山世乒赛女团金牌",
       "type": "团体·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -871,6 +917,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-02-27",
       "event": "ITTF Awards Night：孙颖莎获 2023 年度女子明星奖（Female Star）",
+      "shortEventTitle": "ITTF Awards Night: 2023 年度女子明星奖",
       "type": "奖项",
       "who": "孙颖莎",
       "is_title": false,
@@ -883,6 +930,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-03-15",
       "event": "WTT 新加坡大满贯混双三连冠（3:1 林钟勋/申裕斌）",
+      "shortEventTitle": "WTT 新加坡大满贯混双三连冠",
       "type": "混双·冠军",
       "who": "双人",
       "is_title": true,
@@ -895,6 +943,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-03-17",
       "event": "WTT 新加坡大满贯男单冠军（4:1 梁靖崑）——大满贯单打首冠",
+      "shortEventTitle": "WTT 新加坡大满贯男单冠军",
       "type": "单打·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -907,6 +956,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-03-31",
       "event": "WTT 冠军赛仁川站女单冠军（4:0 王曼昱）",
+      "shortEventTitle": "WTT 冠军赛仁川站女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -919,6 +969,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-04-21",
       "event": "澳门单打世界杯女单冠军（4:3 王曼昱）——世界杯女单首冠",
+      "shortEventTitle": "澳门单打世界杯女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -931,6 +982,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-05-09",
       "event": "WTT 沙特大满贯混双冠军（3:0 黄镇廷/杜凯琹）",
+      "shortEventTitle": "WTT 沙特大满贯混双冠军",
       "type": "混双·冠军",
       "who": "双人",
       "is_title": true,
@@ -943,6 +995,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-05-11",
       "event": "WTT 沙特大满贯男单冠军（4:2 弗朗西斯卡），本站三冠王",
+      "shortEventTitle": "WTT 沙特大满贯男单冠军，本站三冠王",
       "type": "单打·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -955,6 +1008,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-06-03",
       "event": "WTT 冠军赛重庆站女单冠军（4:3 王曼昱）",
+      "shortEventTitle": "WTT 冠军赛重庆站女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -967,6 +1021,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-06-26",
       "event": "汰渍官宣孙颖莎为品牌代言人（巴黎奥运周期个人代言爆发起点）",
+      "shortEventTitle": "汰渍官宣品牌代言人",
       "type": "代言",
       "who": "孙颖莎",
       "is_title": false,
@@ -979,6 +1034,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-06-27",
       "event": "宝洁官宣孙颖莎为奥运大使（《冠军 决于日常》宣传片）",
+      "shortEventTitle": "宝洁官宣孙颖莎为奥运大使",
       "type": "代言",
       "who": "孙颖莎",
       "is_title": false,
@@ -991,6 +1047,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-07-30",
       "event": "巴黎奥运会混双金牌（4:2 李正植/金琴英）：中国奥运史上第一枚乒乓混双金牌",
+      "shortEventTitle": "巴黎奥运会混双金牌",
       "type": "混双·冠军",
       "who": "双人",
       "is_title": true,
@@ -1003,6 +1060,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-07-30",
       "event": "同日：颁奖后王楚钦的主拍被场内摄影记者踩断，次日男单 32 强 2:4 负莫雷加德",
+      "shortEventTitle": "巴黎断拍",
       "type": "纪事（不做庆祝）",
       "who": "王楚钦",
       "is_title": false,
@@ -1010,11 +1068,12 @@ export const EVENT_DATA = {
       "confidence": "高",
       "note": "只作时间轴，不做「纪念日」卡",
       "id": "A036",
-      "selectable": false
+      "selectable": true
     },
     {
       "date": "2024-07-30",
       "event": "巴黎奥运混双夺冠后击掌浅拥抱、孙颖莎哽咽——中国奥运混双首金名场面",
+      "shortEventTitle": "巴黎奥运混双夺冠后拥抱（第 4 次拥抱）",
       "type": "名场面",
       "who": "双人",
       "is_title": false,
@@ -1027,6 +1086,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-08-01",
       "event": "巴黎奥运会男单 32 强：换拍后 2:4 负莫雷加德（踩拍事件次日）",
+      "shortEventTitle": "巴黎奥运会男单",
       "type": "纪事（不做庆祝）",
       "who": "王楚钦",
       "is_title": false,
@@ -1039,6 +1099,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-08-03",
       "event": "巴黎奥运会女单银牌",
+      "shortEventTitle": "巴黎奥运会女单银牌",
       "type": "单打·奖牌",
       "who": "孙颖莎",
       "is_title": false,
@@ -1051,6 +1112,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-08-09",
       "event": "巴黎奥运会男团金牌",
+      "shortEventTitle": "巴黎奥运会男团金牌",
       "type": "团体·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -1063,6 +1125,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-08-10",
       "event": "巴黎奥运会女团金牌（3:0 日本），中国夏季奥运第 300 金",
+      "shortEventTitle": "巴黎奥运会女团金牌",
       "type": "团体·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -1075,6 +1138,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-08-11",
       "event": "巴黎奥运会闭幕式：作为亚洲代表参与熄灭奥运圣火",
+      "shortEventTitle": "巴黎奥运会闭幕式·亚洲代表·熄灭圣火",
       "type": "名场面",
       "who": "孙颖莎",
       "is_title": false,
@@ -1087,6 +1151,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-08-12",
       "event": "《荣耀之路》巴黎奥运采访完整版流出（莎头单人/双人采访）",
+      "shortEventTitle": "《荣耀之路》巴黎奥运采访",
       "type": "综艺",
       "who": "双人",
       "is_title": false,
@@ -1099,6 +1164,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-09-02",
       "event": "澳门品牌见面会：王楚钦、孙颖莎宠粉自拍引爆全场",
+      "shortEventTitle": "澳门品牌见面会",
       "type": "活动",
       "who": "双人",
       "is_title": false,
@@ -1111,6 +1177,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-09-06",
       "event": "登上《时尚芭莎》十月刊封面（创刊周年单人封面官宣）",
+      "shortEventTitle": "登上《时尚芭莎》十月刊封面",
       "type": "杂志",
       "who": "孙颖莎",
       "is_title": false,
@@ -1123,6 +1190,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-09-15",
       "event": "WTT 冠军赛澳门站女单冠军（4:2 王艺迪）",
+      "shortEventTitle": "WTT 冠军赛澳门站女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -1135,6 +1203,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-09-24",
       "event": "OLAY 官宣孙颖莎为品牌代言人；生日点 11:04 上线，10 分钟销售额破千万",
+      "shortEventTitle": "OLAY 官宣孙颖莎为品牌代言人",
       "type": "代言",
       "who": "孙颖莎",
       "is_title": false,
@@ -1147,6 +1216,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-10-06",
       "event": "WTT 中国大满贯（北京）女单冠军（4:2 王曼昱）",
+      "shortEventTitle": "WTT 中国大满贯（北京）女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -1159,6 +1229,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-11-04",
       "event": "欧扎克官宣孙颖莎为品牌代言人（生日当天）",
+      "shortEventTitle": "欧扎克官宣孙颖莎为品牌代言人",
       "type": "代言",
       "who": "孙颖莎",
       "is_title": false,
@@ -1171,6 +1242,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-11-24",
       "event": "WTT 总决赛（福冈）男单三连冠（4:0 张本智和）",
+      "shortEventTitle": "WTT 总决赛（福冈）男单三连冠",
       "type": "单打·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -1183,6 +1255,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-12-08",
       "event": "混团世界杯（成都）卫冕，8:1 韩国",
+      "shortEventTitle": "混团世界杯（成都）卫冕",
       "type": "混团·冠军",
       "who": "双人",
       "is_title": true,
@@ -1195,6 +1268,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-12-09",
       "event": "《ELLE》预告孙颖莎登上 2025 开年刊封面",
+      "shortEventTitle": "《ELLE》预告孙颖莎登上 2025 开年刊封面",
       "type": "杂志",
       "who": "孙颖莎",
       "is_title": false,
@@ -1207,6 +1281,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-12-10",
       "event": "「亲相见」袜业：莎头组合代言宣传片公开（辽源公益形象大使）",
+      "shortEventTitle": "「亲相见」：莎头组合代言宣传片",
       "type": "代言",
       "who": "双人",
       "is_title": false,
@@ -1219,6 +1294,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-12-27",
       "event": "肯德基官宣孙颖莎为品牌代言人",
+      "shortEventTitle": "肯德基官宣孙颖莎为品牌代言人",
       "type": "代言",
       "who": "孙颖莎",
       "is_title": false,
@@ -1231,6 +1307,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-12-29",
       "event": "上海汰渍见面会（粉丝现场应援节点）",
+      "shortEventTitle": "上海汰渍见面会",
       "type": "活动",
       "who": "孙颖莎",
       "is_title": false,
@@ -1243,6 +1320,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-01-02",
       "event": "优时颜官宣王楚钦为品牌代言人（奥运后首个个人品牌级代言，冲上热搜）",
+      "shortEventTitle": "优时颜官宣王楚钦为品牌代言人",
       "type": "代言",
       "who": "王楚钦",
       "is_title": false,
@@ -1255,6 +1333,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-01-06",
       "event": "半亩花田官宣孙颖莎为全球品牌代言人（洗护发）",
+      "shortEventTitle": "半亩花田官宣全球品牌代言人",
       "type": "代言",
       "who": "孙颖莎",
       "is_title": false,
@@ -1267,6 +1346,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-01-17",
       "event": "理肤泉官宣孙颖莎为品牌修护代言人",
+      "shortEventTitle": "理肤泉官宣品牌修护代言人",
       "type": "代言",
       "who": "孙颖莎",
       "is_title": false,
@@ -1279,6 +1359,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-02-25",
       "event": "路易威登官宣王楚钦为品牌大使",
+      "shortEventTitle": "路易威登官宣品牌大使",
       "type": "代言",
       "who": "王楚钦",
       "is_title": false,
@@ -1291,6 +1372,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-02-26",
       "event": "高露洁官宣孙颖莎为品牌代言人",
+      "shortEventTitle": "高露洁官宣品牌代言人",
       "type": "代言",
       "who": "孙颖莎",
       "is_title": false,
@@ -1303,6 +1385,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-02-28",
       "event": "奈斯派索（Nespresso）官宣王楚钦为品牌大使",
+      "shortEventTitle": "奈斯派索（Nespresso）官宣品牌大使",
       "type": "代言",
       "who": "王楚钦",
       "is_title": false,
@@ -1315,6 +1398,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-02-09",
       "event": "新加坡大满贯女单冠军（4:1 蒯曼）",
+      "shortEventTitle": "新加坡大满贯女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -1325,20 +1409,9 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2025-03-11",
-      "event": "重庆 WTT 消费节：「亲相见」品牌展位（莎头代言周边）火爆",
-      "type": "活动",
-      "who": "双人",
-      "is_title": false,
-      "source": "央广网 2025-03-16",
-      "confidence": "中",
-      "note": "活动窗口 3/11–16，取开幕日",
-      "id": "A146",
-      "selectable": true
-    },
-    {
       "date": "2025-03-16",
       "event": "WTT 冠军赛重庆站男单冠军（4:1 林诗栋）",
+      "shortEventTitle": "WTT 冠军赛重庆站男单冠军",
       "type": "单打·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -1351,6 +1424,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-03-16",
       "event": "WTT 冠军赛重庆站女单冠军（4:0 陈幸同）",
+      "shortEventTitle": "WTT 冠军赛重庆站女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -1363,6 +1437,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-03-19",
       "event": "麦当劳中国官宣王楚钦为品牌代言人（「向上生长，我就喜欢」）",
+      "shortEventTitle": "麦当劳中国官宣品牌代言人",
       "type": "代言",
       "who": "王楚钦",
       "is_title": false,
@@ -1375,6 +1450,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-03-24",
       "event": "OPPO 官宣孙颖莎为智能生态品牌代言人/全球合作伙伴",
+      "shortEventTitle": "OPPO 官宣智能生态品牌代言人/全球合作伙伴",
       "type": "代言",
       "who": "孙颖莎",
       "is_title": false,
@@ -1387,6 +1463,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-03-24",
       "event": "上海红双喜 2025 商务年会：马龙、王楚钦、孙颖莎同框亮相",
+      "shortEventTitle": "上海红双喜 2025 商务年会",
       "type": "活动",
       "who": "双人",
       "is_title": false,
@@ -1399,6 +1476,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-03-31",
       "event": "红旗天工家族官宣孙颖莎为代言人（智能体验日亮相）",
+      "shortEventTitle": "红旗天工家族官宣代言人",
       "type": "代言",
       "who": "孙颖莎",
       "is_title": false,
@@ -1411,6 +1489,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-04-20",
       "event": "澳门单打世界杯女单卫冕（4:0 蒯曼）",
+      "shortEventTitle": "澳门单打世界杯女单卫冕",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -1423,6 +1502,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-04-22",
       "event": "舒肤佳官宣王楚钦为品牌全线代言人（官宣预热 4/21，正式日 4/22）",
+      "shortEventTitle": "舒肤佳官宣品牌全线代言人",
       "type": "代言",
       "who": "王楚钦",
       "is_title": false,
@@ -1435,6 +1515,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-04-28",
       "event": "碧然德官宣孙颖莎为品牌代言人",
+      "shortEventTitle": "碧然德官宣品牌代言人",
       "type": "代言",
       "who": "孙颖莎",
       "is_title": false,
@@ -1447,6 +1528,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-05-11",
       "event": "Qeelin 麒麟官宣王楚钦为品牌代言人（生日当天）",
+      "shortEventTitle": "Qeelin 麒麟官宣品牌代言人",
       "type": "代言",
       "who": "王楚钦",
       "is_title": false,
@@ -1459,6 +1541,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-05-15",
       "event": "雀巢（饼干）官宣孙颖莎为品牌代言人",
+      "shortEventTitle": "雀巢官宣品牌代言人",
       "type": "代言",
       "who": "孙颖莎",
       "is_title": false,
@@ -1471,6 +1554,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-05-19",
       "event": "多哈世乒赛混双次轮：王楚钦主拍在赛前器材检测环节受损，临场换拍 3:0 胜",
+      "shortEventTitle": "多哈世乒赛混双，王楚钦被撕胶皮换拍",
       "type": "纪事（不做庆祝）",
       "who": "王楚钦",
       "is_title": false,
@@ -1478,11 +1562,12 @@ export const EVENT_DATA = {
       "confidence": "高",
       "note": "当地 5/19",
       "id": "A043",
-      "selectable": false
+      "selectable": true
     },
     {
       "date": "2025-05-24",
       "event": "多哈世乒赛混双三连冠（3:1 吉村真晴/大藤沙月）",
+      "shortEventTitle": "多哈世乒赛混双三连冠",
       "type": "混双·冠军",
       "who": "双人",
       "is_title": true,
@@ -1495,6 +1580,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-05-24",
       "event": "多哈世乒赛混双三连冠后拥抱庆祝——休斯敦/德班/多哈「三连拥抱」名场面",
+      "shortEventTitle": "多哈世乒赛混双夺冠后拥抱",
       "type": "名场面",
       "who": "双人",
       "is_title": false,
@@ -1507,6 +1593,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-05-25",
       "event": "多哈世乒赛男单冠军（4:1 雨果），第一个世锦赛男单冠军",
+      "shortEventTitle": "多哈世乒赛男单冠军",
       "type": "单打·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -1519,6 +1606,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-05-25",
       "event": "多哈世乒赛女单卫冕（4:3 王曼昱）",
+      "shortEventTitle": "多哈世乒赛女单卫冕",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -1531,6 +1619,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-05-25",
       "event": "多哈世乒赛：孙颖莎女单卫冕成就世乒赛「双圈金满贯」（女团/女单/女双/混双均至少两冠）",
+      "shortEventTitle": "世乒赛「双圈金满贯」",
       "type": "里程碑",
       "who": "孙颖莎",
       "is_title": false,
@@ -1543,6 +1632,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-05-28",
       "event": "妮维雅官宣孙颖莎为品牌代言人（身体护理）",
+      "shortEventTitle": "妮维雅官宣品牌代言人",
       "type": "代言",
       "who": "孙颖莎",
       "is_title": false,
@@ -1555,6 +1645,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-06-01",
       "event": "蜜丝婷官宣王楚钦为全球防晒代言人",
+      "shortEventTitle": "蜜丝婷官宣全球防晒代言人",
       "type": "代言",
       "who": "王楚钦",
       "is_title": false,
@@ -1567,6 +1658,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-06-01",
       "event": "《嘉人》六月刊：孙颖莎封面释出（三登五大女刊节点）",
+      "shortEventTitle": "登上《嘉人》六月刊封面",
       "type": "杂志",
       "who": "孙颖莎",
       "is_title": false,
@@ -1579,6 +1671,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-07-13",
       "event": "WTT 美国大满贯男单冠军（4:0 张本智和）",
+      "shortEventTitle": "WTT 美国大满贯男单冠军",
       "type": "单打·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -1591,6 +1684,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-07-15",
       "event": "欧克利（Oakley）官宣王楚钦加入 Team Oakley",
+      "shortEventTitle": "欧克利（Oakley）官宣",
       "type": "代言",
       "who": "王楚钦",
       "is_title": false,
@@ -1603,6 +1697,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-08-24",
       "event": "WTT Europe Smash（瑞典）女单冠军（4:2 王曼昱）",
+      "shortEventTitle": "WTT 瑞典大满贯女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -1615,6 +1710,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-08-25",
       "event": "清扬官宣王楚钦为品牌代言人",
+      "shortEventTitle": "清扬官宣品牌代言人",
       "type": "代言",
       "who": "王楚钦",
       "is_title": false,
@@ -1627,6 +1723,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-09-14",
       "event": "WTT 冠军赛澳门站女单冠军（4:3 王曼昱）",
+      "shortEventTitle": "WTT 冠军赛澳门站女单冠军",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -1639,6 +1736,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-09-08",
       "event": "全棉时代官宣孙颖莎为全球品牌代言人（棉柔巾）",
+      "shortEventTitle": "全棉时代官宣全球品牌代言人",
       "type": "代言",
       "who": "孙颖莎",
       "is_title": false,
@@ -1651,6 +1749,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-09-14",
       "event": "WTT 冠军赛澳门站男单冠军（4:0 雨果）",
+      "shortEventTitle": "WTT 冠军赛澳门站男单冠军",
       "type": "单打·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -1663,6 +1762,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-09-24",
       "event": "梅赛德斯-奔驰官宣王楚钦为品牌新锐大使",
+      "shortEventTitle": "梅赛德斯-奔驰官宣品牌新锐大使",
       "type": "代言",
       "who": "王楚钦",
       "is_title": false,
@@ -1675,6 +1775,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-10-03",
       "event": "WTT 中国大满贯（北京）混双冠军（3:0 黄友政/陈熠），第 5 个大满贯混双冠军",
+      "shortEventTitle": "WTT 北京大满贯混双冠军",
       "type": "混双·冠军",
       "who": "双人",
       "is_title": true,
@@ -1687,6 +1788,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-10-05",
       "event": "WTT 中国大满贯（北京）男单冠军（4:0 勒布伦）",
+      "shortEventTitle": "WTT 北京大满贯混男单冠军",
       "type": "单打·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -1699,6 +1801,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-12-07",
       "event": "混团世界杯（成都）三连冠，8:1 日本",
+      "shortEventTitle": "混团世界杯（成都）三连冠",
       "type": "混团·冠军",
       "who": "双人",
       "is_title": true,
@@ -1711,6 +1814,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-12-13",
       "event": "WTT 香港总决赛混双亚军（0:3 林钟勋/申裕斌；孙颖莎带伤）",
+      "shortEventTitle": "WTT 香港总决赛混双亚军",
       "type": "混双·奖牌",
       "who": "双人",
       "is_title": false,
@@ -1723,6 +1827,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-12-18",
       "event": "JBL 官宣王楚钦为大中华区代言人",
+      "shortEventTitle": "JBL 官宣大中华区代言人",
       "type": "代言",
       "who": "王楚钦",
       "is_title": false,
@@ -1735,6 +1840,7 @@ export const EVENT_DATA = {
     {
       "date": "2026-01-02",
       "event": "优时颜官宣王楚钦升级为全球品牌代言人",
+      "shortEventTitle": "优时颜官宣升级全球品牌代言人",
       "type": "代言",
       "who": "王楚钦",
       "is_title": false,
@@ -1747,6 +1853,7 @@ export const EVENT_DATA = {
     {
       "date": "2026-02-09",
       "event": "薇诺娜官宣王楚钦为亚太区品牌代言人",
+      "shortEventTitle": "薇诺娜官宣亚太区品牌代言人",
       "type": "代言",
       "who": "王楚钦",
       "is_title": false,
@@ -1759,6 +1866,7 @@ export const EVENT_DATA = {
     {
       "date": "2026-03-01",
       "event": "WTT 新加坡大满贯男单冠军（4:0 林昀儒）",
+      "shortEventTitle": "WTT 新加坡大满贯男单冠军",
       "type": "单打·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -1771,6 +1879,7 @@ export const EVENT_DATA = {
     {
       "date": "2026-04-05",
       "event": "澳门世界杯男单冠军（4:3 松岛辉空），首个世界杯男单",
+      "shortEventTitle": "澳门世界杯男单冠军",
       "type": "单打·冠军",
       "who": "王楚钦",
       "is_title": true,
@@ -1783,6 +1892,7 @@ export const EVENT_DATA = {
     {
       "date": "2026-04-05",
       "event": "澳门世界杯女单三连冠（4:1 王曼昱）",
+      "shortEventTitle": "澳门世界杯女单三连冠",
       "type": "单打·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -1795,6 +1905,7 @@ export const EVENT_DATA = {
     {
       "date": "2026-04-13",
       "event": "世界乒联首次以「megastar」（超级巨星）认证孙颖莎——现役最高荣誉头衔",
+      "shortEventTitle": "世界乒联「megastar」认证",
       "type": "里程碑",
       "who": "孙颖莎",
       "is_title": false,
@@ -1807,6 +1918,7 @@ export const EVENT_DATA = {
     {
       "date": "2026-04-23",
       "event": "ITTF 百年乒乓纪录片《Who is the Table Tennis GOAT?》上线：开篇镜头为王楚钦与孙颖莎",
+      "shortEventTitle": "ITTF 百年乒乓纪录片",
       "type": "综艺",
       "who": "双人",
       "is_title": false,
@@ -1819,6 +1931,7 @@ export const EVENT_DATA = {
     {
       "date": "2026-05-10",
       "event": "伦敦世乒赛团体赛：中国男团十二连冠、女团七连冠，两人都在阵中；王楚钦获最佳男子运动员（MVP）",
+      "shortEventTitle": "伦敦世乒赛团体赛冠军",
       "type": "团体·冠军",
       "who": "双人",
       "is_title": true,
@@ -1831,6 +1944,7 @@ export const EVENT_DATA = {
     {
       "date": "2026-06-02",
       "event": "接替马龙出任国乒男队队长（梁靖崑任副队长）；媒体报道王皓在伦敦世乒赛后队内总结会宣布",
+      "shortEventTitle": "接替马龙出任国乒男队队长",
       "type": "里程碑",
       "who": "王楚钦",
       "is_title": false,
@@ -1843,6 +1957,7 @@ export const EVENT_DATA = {
     {
       "date": "2026-09-24",
       "event": "爱知·名古屋亚运会女团金牌（孙颖莎出场）；同届男团银牌（王楚钦出场）",
+      "shortEventTitle": "爱知·名古屋亚运会女团金牌",
       "type": "团体·冠军",
       "who": "孙颖莎",
       "is_title": true,
@@ -1855,6 +1970,7 @@ export const EVENT_DATA = {
     {
       "date": "2026-09-26",
       "event": "爱知·名古屋亚运会混双亚军（0:4 林诗栋/蒯曼；王楚钦带伤）",
+      "shortEventTitle": "爱知·名古屋亚运会混双亚军",
       "type": "混双·奖牌",
       "who": "双人",
       "is_title": false,
@@ -1865,32 +1981,48 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2026-09-30",
-      "event": "王楚钦因伤退出 WTT 中国大满贯，莎头混双随之退赛",
-      "type": "纪事（不做庆祝）",
-      "who": "双人",
+      "date": "2026-09-27",
+      "event": "爱知·名古屋亚运会女单亚军",
+      "shortEventTitle": "爱知·名古屋亚运会女单亚军",
+      "type": "单打·奖牌",
+      "who": "孙颖莎",
       "is_title": false,
-      "source": "新华网 2026-09-30",
+      "source": "新华网 2026-09-27",
       "confidence": "高",
-      "note": "",
-      "id": "A055",
-      "selectable": false
+      "note": "女单决赛日。颁奖仪式当地 9/27。",
+      "id": "A187",
+      "selectable": true
     },
     {
-      "date": "2026-10-27",
-      "event": "WTT 冠军赛 蒙彼利埃（10/27–11/1）",
-      "type": "赛程",
-      "who": "双人",
+      "date": "2026-09-28",
+      "event": "爱知·名古屋亚运会男单亚军",
+      "shortEventTitle": "爱知·名古屋亚运会男单亚军",
+      "type": "单打·奖牌",
+      "who": "王楚钦",
       "is_title": false,
-      "source": "WTT 2026 Calendar（见 pingpong-ideas.md）",
+      "source": "新华网 2026-09-28",
       "confidence": "高",
-      "note": "",
+      "note": "男单决赛日，新华社名古屋 9/28 电。",
+      "id": "A188",
+      "selectable": true
+    },
+    {
+      "date": "2026-11-02",
+      "event": "WTT 冠军赛蒙彼利埃站女单冠军",
+      "shortEventTitle": "WTT 冠军赛蒙彼利埃站女单冠军",
+      "type": "单打·冠军",
+      "who": "孙颖莎",
+      "is_title": true,
+      "source": "新华社 2026-11-02",
+      "confidence": "高",
+      "note": "当地决赛 11/1，北京时间 11/2 凌晨。本站男单冠军不是王楚钦。",
       "id": "A056",
-      "selectable": false
+      "selectable": true
     },
     {
       "date": "2026-11-03",
       "event": "WTT 冠军赛 法兰克福（11/3–11/8）",
+      "shortEventTitle": "WTT 冠军赛 法兰克福",
       "type": "赛程",
       "who": "双人",
       "is_title": false,
@@ -1903,6 +2035,7 @@ export const EVENT_DATA = {
     {
       "date": "2026-11-29",
       "event": "国际乒联混合团体世界杯 成都（11/29–12/6）",
+      "shortEventTitle": "国际乒联混合团体世界杯 成都",
       "type": "赛程",
       "who": "双人",
       "is_title": false,
@@ -1915,6 +2048,7 @@ export const EVENT_DATA = {
     {
       "date": "2026-12-09",
       "event": "WTT 总决赛 香港 启德（12/9–12/13；ITTF 日历写 12/8–13）",
+      "shortEventTitle": "WTT 总决赛 香港 启德",
       "type": "赛程",
       "who": "双人",
       "is_title": false,
@@ -1927,6 +2061,7 @@ export const EVENT_DATA = {
     {
       "date": "—",
       "event": "「5114」= 0511 + 1104，粉丝特殊数字；511/114/1000/5114 天为优先里程碑",
+      "shortEventTitle": "「5114」= 0511 + 1104，粉丝特殊…",
       "type": "粉丝数字",
       "who": "双人",
       "is_title": false,
@@ -1939,6 +2074,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-08-29",
       "event": "巴黎奥运后内地奥运健儿代表团抵达香港，开始港澳行（莎/头随团）",
+      "shortEventTitle": "巴奥港澳行",
       "type": "活动",
       "who": "双人",
       "is_title": false,
@@ -1951,6 +2087,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-08-30",
       "event": "港澳行·香港：参观香港体育学院交流；下午太平山/维港行程；晚伊利沙伯体育馆「奥运健儿大汇演」（乒乓示范表演）",
+      "shortEventTitle": "港澳行·香港",
       "type": "活动",
       "who": "双人",
       "is_title": false,
@@ -1963,30 +2100,20 @@ export const EVENT_DATA = {
     {
       "date": "2024-08-31",
       "event": "港澳行·香港都会大学青年交流：孙颖莎发表「胸前的国旗永远大于背后的姓名」",
+      "shortEventTitle": "港澳行·香港都会大学青年交流",
       "type": "名场面",
       "who": "孙颖莎",
       "is_title": false,
       "source": "中国日报网 / 中新网 2024-08-31",
       "confidence": "高",
-      "note": "同日下午代表团结束访港、经港珠澳大桥赴澳（见下条）",
+      "note": "同日下午代表团结束访港、经港珠澳大桥赴澳。",
       "id": "A164",
-      "selectable": true
-    },
-    {
-      "date": "2024-08-31",
-      "event": "港澳行：结束访港，经港珠澳大桥口岸抵达澳门（访澳三天开始）",
-      "type": "活动",
-      "who": "双人",
-      "is_title": false,
-      "source": "新华网 2024-08-31",
-      "confidence": "高",
-      "note": "",
-      "id": "A165",
       "selectable": true
     },
     {
       "date": "2024-09-01",
       "event": "港澳行·澳门：奥运健儿与青少年真情对话/乒乓互动（莎/头与澳门选手组队）；晚「我们的骄傲」联欢晚会",
+      "shortEventTitle": "港澳行·澳门",
       "type": "活动",
       "who": "双人",
       "is_title": false,
@@ -1999,6 +2126,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-09-02",
       "event": "港澳行结束：内地奥运健儿代表团结束访澳，启程返回内地",
+      "shortEventTitle": "港澳行结束",
       "type": "活动",
       "who": "双人",
       "is_title": false,
@@ -2011,6 +2139,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-08-13",
       "event": "小红书直播：巴黎后「莎头」+肖战+邱贻可复盘首场（回应翻白眼、散装英语、闭幕式等）",
+      "shortEventTitle": "小红书直播",
       "type": "活动",
       "who": "双人",
       "is_title": false,
@@ -2023,6 +2152,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-08-13",
       "event": "采访金句「这叫期望更高」（孙颖莎回应训练翻白眼）——小红书巴黎复盘直播",
+      "shortEventTitle": "「这叫期望更高」（孙颖莎回应训练翻白眼）",
       "type": "名场面",
       "who": "孙颖莎",
       "is_title": false,
@@ -2035,6 +2165,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-09-08",
       "event": "《Another Man》中文版 9 月刊封面开售（王楚钦；12:00 开售，1 分钟销量破 10 万）",
+      "shortEventTitle": "《Another Man》中文版 9 月刊封面",
       "type": "杂志",
       "who": "王楚钦",
       "is_title": false,
@@ -2047,6 +2178,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-09-25",
       "event": "《时尚 COSMOPOLITAN》11 月刊封面开售（王楚钦；14:00 开售）",
+      "shortEventTitle": "《时尚 COSMOPOLITAN》11 月刊封面",
       "type": "杂志",
       "who": "王楚钦",
       "is_title": false,
@@ -2059,6 +2191,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-02-12",
       "event": "《T》中文版 2025 年 2 月刊封面开售（王楚钦；售价约 50 元）",
+      "shortEventTitle": "《T》中文版 2025 年 2 月刊封面",
       "type": "杂志",
       "who": "王楚钦",
       "is_title": false,
@@ -2071,6 +2204,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-08-06",
       "event": "《Wallpaper*》中文版 7&8 月合刊封面开售（王楚钦；12:00）",
+      "shortEventTitle": "《Wallpaper*》中文版 7&8 月合刊封面",
       "type": "杂志",
       "who": "王楚钦",
       "is_title": false,
@@ -2083,6 +2217,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-10-31",
       "event": "《时装男士》17 周年特别策划封面开售（王楚钦；12:30；「影响世界的 TA」）",
+      "shortEventTitle": "《时装男士》17 周年特别策划封面",
       "type": "杂志",
       "who": "王楚钦",
       "is_title": false,
@@ -2095,6 +2230,7 @@ export const EVENT_DATA = {
     {
       "date": "2026-08-21",
       "event": "《智族 GQ》2026 年 8 月刊「竞技场内外」运动员群像封面线上开售（含孙颖莎、王楚钦等；10:00）",
+      "shortEventTitle": "《智族 GQ》2026 年 8 月刊「竞技场内外」封面",
       "type": "杂志",
       "who": "双人",
       "is_title": false,
@@ -2105,20 +2241,9 @@ export const EVENT_DATA = {
       "selectable": true
     },
     {
-      "date": "2026-06-02",
-      "event": "队长公开报道日复核：中新/新华称队内总结会在伦敦世乒赛后「几天」宣布；无更早公开精确日；可选庆祝日仍取本条/A053",
-      "type": "里程碑",
-      "who": "王楚钦",
-      "is_title": false,
-      "source": "中新网 2026-06-02 / 澎湃转述队内会",
-      "confidence": "高",
-      "note": "与 A053 同日；本条为 v1.2 核验备注节点，不替代 A053。队内会精确日未见权威通稿，勿用猜测日庆祝。",
-      "id": "A176",
-      "selectable": false
-    },
-    {
       "date": "2021-11-29",
       "event": "采访金句「这枚金牌是我们最美好的开始」（孙颖莎）——休斯敦世乒赛混双夺冠后采访（粉丝亦作「最好的开始」）",
+      "shortEventTitle": "「这枚金牌是我们最美好的开始」",
       "type": "名场面",
       "who": "孙颖莎",
       "is_title": false,
@@ -2131,6 +2256,7 @@ export const EVENT_DATA = {
     {
       "date": "2021-11-29",
       "event": "采访金句「不拥抱了一下吗？」（孙颖莎）+ 王楚钦答「是」（记者问「这也是你的回答？」）——休斯敦混双夺冠庆祝采访",
+      "shortEventTitle": "「不拥抱了一下吗？」",
       "type": "名场面",
       "who": "双人",
       "is_title": false,
@@ -2143,6 +2269,7 @@ export const EVENT_DATA = {
     {
       "date": "2021-11-29",
       "event": "采访金句「这就是我的回答」（王楚钦，以拥抱回应如何庆祝）——休斯敦混双夺冠采访",
+      "shortEventTitle": "「楚钦，这就是你的回答吗」「是」",
       "type": "名场面",
       "who": "王楚钦",
       "is_title": false,
@@ -2155,6 +2282,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-08-12",
       "event": "采访金句「在浪漫的巴黎，我们拥抱了一下」（孙颖莎）——《荣耀之路》巴黎奥运采访",
+      "shortEventTitle": "「在浪漫的巴黎，我们拥抱了一下」",
       "type": "名场面",
       "who": "孙颖莎",
       "is_title": false,
@@ -2167,6 +2295,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-08-25",
       "event": "采访金句「一个眼神他就『很懂了』」（孙颖莎谈与王楚钦默契）——央视《面对面》相关采访切片",
+      "shortEventTitle": "「一个眼神他就『很懂了』」",
       "type": "名场面",
       "who": "孙颖莎",
       "is_title": false,
@@ -2179,6 +2308,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-08-31",
       "event": "采访金句「胸前的国旗永远大于背后的姓名」（孙颖莎）——香港都会大学交流",
+      "shortEventTitle": "「胸前的国旗永远大于背后的姓名」",
       "type": "名场面",
       "who": "孙颖莎",
       "is_title": false,
@@ -2191,6 +2321,7 @@ export const EVENT_DATA = {
     {
       "date": "2024-11-24",
       "event": "采访金句「希望我们来日方长」（王楚钦对球迷）——WTT 福冈总决赛男单三连冠赛后采访",
+      "shortEventTitle": "「我们来日方长」",
       "type": "名场面",
       "who": "王楚钦",
       "is_title": false,
@@ -2203,6 +2334,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-06-08",
       "event": "采访金句「（除决赛和第一场）剩下的都是孙颖莎带着我打」（王楚钦）——央视《面对面》",
+      "shortEventTitle": "「（除决赛和第一场）剩下的都是孙颖莎带着我打」",
       "type": "名场面",
       "who": "王楚钦",
       "is_title": false,
@@ -2215,6 +2347,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-07-06",
       "event": "采访金句「未来希望自己能承担起更多的责任」（王楚钦谈混双）——人民日报客户端「在场」专访；饭圈常概括为「作为男孩需承担更多」",
+      "shortEventTitle": "「未来希望自己能承担起更多的责任」",
       "type": "名场面",
       "who": "王楚钦",
       "is_title": false,
@@ -2227,6 +2360,7 @@ export const EVENT_DATA = {
     {
       "date": "2025-07-06",
       "event": "采访金句「希望未来有人可以超越我们」（王楚钦谈莎头能否复制）——人民日报客户端「在场」专访",
+      "shortEventTitle": "「希望未来有人可以超越我们」",
       "type": "名场面",
       "who": "王楚钦",
       "is_title": false,
